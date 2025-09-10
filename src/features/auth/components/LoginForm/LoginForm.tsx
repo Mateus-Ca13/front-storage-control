@@ -1,4 +1,4 @@
-import { Button, CircularProgress, InputAdornment, TextField, Typography } from "@mui/material";
+import { Button, CircularProgress, InputAdornment, Paper, TextField, Typography } from "@mui/material";
 import { CenterColumnBox } from "../../../../shared/components/Boxes/Boxes";
 import { useForm } from "react-hook-form";
 import { loginSchema, type LoginSchema } from "../../../../schemas/loginSchema";
@@ -28,6 +28,7 @@ export default function LoginForm() {
     }
 
   return (
+    <Paper elevation={2} sx={{ padding: 8 }}>
     <CenterColumnBox>
         <Typography variant="h4" sx={{ mb: 3, fontWeight: 'bold' }}>
           Bem-vindo(a) de volta!
@@ -87,5 +88,6 @@ export default function LoginForm() {
             </Button>
         </CenterColumnBox>
     </CenterColumnBox>
+    </Paper>
   )
 }

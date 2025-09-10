@@ -1,7 +1,8 @@
+import type { GetReturnType } from "./utils"
 
 export interface iResponse<T> {
     success: boolean
-    data: T | null
+    data: T 
     message: string
 }
 
@@ -11,3 +12,6 @@ export interface ErrorResponse {
     data: null
     message: string
 }
+
+
+export type AsyncResponseDataProps<T> = Awaited<GetReturnType<T>>

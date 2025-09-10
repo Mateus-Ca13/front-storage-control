@@ -1,7 +1,8 @@
-import { Box, Typography } from "@mui/material"
+import { Typography } from "@mui/material"
 import { useEffect } from "react"
 import LoginForm from "../components/LoginForm/LoginForm"
 import { CenterFlexBox, CenterColumnBox } from "../../../shared/components/Boxes/Boxes"
+import { theme } from "../../../theme/theme"
 
 export default function LoginPage() {
 
@@ -12,7 +13,7 @@ export default function LoginPage() {
     <CenterFlexBox
     sx={{
       height: '100vh',
-      backgroundColor: 'background.default',
+      backgroundColor: theme.palette.common.white,
     }}>
         <CenterColumnBox
         sx={{

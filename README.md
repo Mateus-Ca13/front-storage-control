@@ -36,7 +36,7 @@ Siga as instruções abaixo para configurar e executar o projeto em seu ambiente
 
 1.  Clone o repositório:
     ```bash
-    git clone <URL_DO_REPOSITORIO>
+    git clone https://github.com/Mateus-Ca13/front-storage-control.git
     ```
 2.  Navegue até o diretório do projeto:
     ```bash
