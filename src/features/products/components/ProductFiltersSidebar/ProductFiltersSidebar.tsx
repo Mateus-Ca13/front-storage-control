@@ -1,22 +1,39 @@
-import { Button, Chip, Drawer, Typography } from "@mui/material";
-import type { SearchFiltersProps } from "../../pages/ProductsPage";
-import { BetweenFlexBox, CenterFlexBox, StartColumnBox } from "../../../../shared/components/Boxes/Boxes";
+import { Button, Chip, Drawer, FormControl, InputLabel, MenuItem, Select, Tooltip, Typography } from "@mui/material";
+import type { ProductsSearchFiltersProps } from "../../pages/ProductsPage";
+import { BetweenFlexBox, CenterFlexBox, StartColumnBox, StartFlexBox } from "../../../../shared/components/Boxes/Boxes";
 import CheckboxOption from "../../../../shared/components/CheckboxOption/CheckboxOption";
 import MultipleSelect from "../../../../shared/components/MultipleSelect/MultipleSelect";
-import type { SetStateAction } from "react";
-
+import { useEffect, useState, type SetStateAction } from "react";
+import { useCategoryQuery } from "../../../category/hooks/useCategoryQuery";
+import { useStocksQuery } from "../../../stocks/hooks/useStocksQuery";
+import { theme } from "../../../../theme/theme";
+import { InfoOutlineRounded } from "@mui/icons-material";
+import { LightTooltip } from "../../../../shared/components/Tooltip/Tooltip";
 
 type ProductFiltersSidebarProps = {
     open: boolean;
     toggleDrawer: (open: boolean) => void;
-    filters: SearchFiltersProps
-    setFiltersProps: React.Dispatch<SetStateAction<SearchFiltersProps>>
+    filters: ProductsSearchFiltersProps
+    setFiltersProps: React.Dispatch<SetStateAction<ProductsSearchFiltersProps>>
 }
 export default function ProductFiltersSidebar({open, toggleDrawer, filters, setFiltersProps}:ProductFiltersSidebarProps) {
 
-    const categories = [
-        'Limpeza', 'Alimentos', 'Primeiro-socorros', 'Utilitários', 'Produtos de Limpeza', 'CXetremda', 'Cat1', 'Cat11', 'Cat10', 'Cat2', 'Cat3','LimCat4 peza', 'Cat5', 'Cat29-socorros', 'PCat55', 'Produtos _reCat44 Limpeza'
-    ]
+    const [stocks, setStocks] = useState<{name: string, value: string | number}[]>([])
+    const { data: stocksData, isLoading: stockIsLoading, error: stockError } = useStocksQuery(0, 100, '', {type: null})
+    const [categories, setCategories] = useState<{name: string, value: string | number}[]>([])
+    const { data: categoriesData, isLoading: categoriesIsLoading, error: categoriesError } = useCategoryQuery(0, 100, '', {orderBy: 'asc', sortBy: 'name'})
+
+    useEffect(()=>{
+        if(categoriesData?.data.categories){
+            setCategories(categoriesData.data.categories.map((category)=>({name: category.name, value: category.id})))
+        }
+    },[categoriesData])
+
+    useEffect(()=>{
+        if(stocksData?.data.stocks){
+            setStocks(stocksData.data.stocks.map((stock)=>({name: stock.name, value: stock.id})))
+        }   
+    },[stocksData])
 
   return (
     <Drawer 
@@ -68,17 +85,73 @@ export default function ProductFiltersSidebar({open, toggleDrawer, filters, setF
                 propValueSetter={()=>setFiltersProps({...filters, sortBy: 'stockedQuantities'})}/>
             </StartColumnBox>
             <StartColumnBox mt={4} gap={2}>
-                <Typography variant="body1" fontWeight={500}>Filtrar por categoria</Typography>
-                <MultipleSelect options={categories} selectedValueSetter={setFiltersProps} selectedValues={filters.categoriesIds}/>
+                <Typography variant="body1" fontWeight={500}>Filtrar por Categorias</Typography>
+                <MultipleSelect options={categories} selectedValueSetter={(value)=>setFiltersProps({...filters, categoriesIds: value})} selectedValues={filters.categoriesIds}/>
+            </StartColumnBox>
+            <StartColumnBox mt={4} gap={2}>
+                <StartFlexBox gap={1}>
+                <Typography variant="body1" fontWeight={500}>Filtrar por Estoque</Typography>
+                <LightTooltip
+                title='Quando selecionado, reflete apenas os produtos e quantidades no estoque selecionado'>
+                    <InfoOutlineRounded  color='secondary' fontSize="small"/>
+                </LightTooltip>
+                </StartFlexBox>
+                <FormControl
+                 fullWidth>
+                    <InputLabel id="stockLabel">Selecione o estoque</InputLabel>
+                    <Select
+                        label="Selecione o estoque"
+                        
+                        fullWidth
+                        labelId="stockLabel"
+                        id="stockId"
+                        value={filters.stockId ?? ''}
+                        onChange={(e)=>setFiltersProps({...filters, stockId: e.target.value? Number(e.target.value) : undefined})}
+                        MenuProps={{
+                            PaperProps: {
+                                style: { maxHeight: 48 * 4.5 + 8, width: 250 },
+                            },
+                        }}
+                        >
+                            <MenuItem
+                            sx={{
+                                "&.Mui-selected": {
+                                    backgroundColor: theme.palette.secondary.main,
+                                    color: theme.palette.background.default,
+                                    ':hover': {
+                                        backgroundColor: theme.palette.secondary.light,
+                                    }
+                                },
+                            }} 
+                            value={''}><em>Todos</em></MenuItem>
+                            {stocks.map((stock)=>(
+                            <MenuItem 
+                            sx={{
+                                "&.Mui-selected": {
+                                    backgroundColor: theme.palette.secondary.main,
+                                    color: theme.palette.background.default,
+                                    ':hover': {
+                                        backgroundColor: theme.palette.secondary.light,
+                                    }
+                                },
+                            }} 
+                            key={stock.value} value={stock.value}>{stock.name}</MenuItem>
+                            ))}
+                        </Select>
+                </FormControl>
             </StartColumnBox>
              <StartColumnBox mt={4} gap={2}>
-                <Typography variant="body1" fontWeight={500}>Filtrar por alerta</Typography>
+                <Typography variant="body1" fontWeight={500}>Filtrar por alertas</Typography>
                 <CheckboxOption 
                 checked={filters.isBelowMinStock}  
-                label={'Apenas produtos com estoque baixo'}
+                label={'Apenas com estoque baixo'}
                 propValueSetter={()=>setFiltersProps((prev) => ({...filters, isBelowMinStock: !prev.isBelowMinStock}))} />
+                <CheckboxOption 
+                checked={filters.hasNoCodebar}  
+                label={'Apenas sem código de barras'}
+                propValueSetter={()=>setFiltersProps((prev) => ({...filters, hasNoCodebar: !prev.hasNoCodebar}))} />
              </StartColumnBox>
-            <Button variant="contained" sx={{ marginTop: 'auto', textTransform: 'none' }} fullWidth onClick={()=>{console.log(filters); toggleDrawer(false)}}>Confirmar filtros</Button>
+            <Button variant="contained" sx={{ marginTop: 'auto', textTransform: 'none', padding: 2 }} fullWidth onClick={()=>{console.log(filters); toggleDrawer(false)}}>Confirmar filtros</Button>
         </StartColumnBox>
     </Drawer>
   )

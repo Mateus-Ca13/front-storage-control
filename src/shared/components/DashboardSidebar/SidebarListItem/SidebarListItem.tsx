@@ -24,6 +24,7 @@ const StyledListItem = styled(ListItem, {
       itemtype === "topic"
         ? theme.palette.primary.main
         : theme.palette.primary.light,
+    
   },
 }));
 

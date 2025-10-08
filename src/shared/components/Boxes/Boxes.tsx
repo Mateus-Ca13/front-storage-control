@@ -8,6 +8,12 @@ export const CenterFlexBox = styled(Box)<BoxProps>({
   alignItems: "center",
 });
 
+export const EndFlexBox = styled(Box)<BoxProps>({
+  display: "flex",
+  justifyContent: "end",
+  alignItems: "center",
+});
+
 export const StartFlexBox = styled(Box)<BoxProps>({
   display: "flex",
   justifyContent: "start",

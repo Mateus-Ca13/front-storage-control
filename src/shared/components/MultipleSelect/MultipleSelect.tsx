@@ -1,59 +1,61 @@
 import { Box, Chip, MenuItem, Select, type SelectChangeEvent } from '@mui/material'
-import type { SearchFiltersProps } from '../../../features/products/pages/ProductsPage'
-import type { SetStateAction } from 'react'
 import { theme } from '../../../theme/theme'
 
 type MultipleSelectProps = {
-    options: string[]
+    options: MultipleSelectOptionProps[]
     selectedValues: string[]
-    selectedValueSetter: React.Dispatch<SetStateAction<SearchFiltersProps>>
+    selectedValueSetter: (...args: any[]) => void
 }
+
+type MultipleSelectOptionProps = {
+    name: string;
+    value: string | number;
+}
+
 
 export default function MultipleSelect({ options, selectedValueSetter, selectedValues }: MultipleSelectProps) {
 
-    const handleChange = (event: SelectChangeEvent<typeof options>) => {
-        const {target: { value }} = event;
-        selectedValueSetter((prev)=> ({...prev, categoriesIds: typeof value === 'string' ? value.split(',') : value }));
+    const handleChange = (event: SelectChangeEvent<typeof options[number]['value'][]>) => {
+        
+        const {target: { value }} = event ;
+        selectedValueSetter(typeof value === 'string' ? value.split(',') : value);
     };
 
   return (
    <Select
-    multiple
-    fullWidth
-    color='primary'
-    MenuProps={{
-        slotProps: {
-            paper: {
-                sx: {
-                    'maxHeight': 200,
-                }
-            }
-    }}}
-    sx={{
-       "& .MuiSelect-select": {
-      display: "flex",
-      flexWrap: "wrap",
-      gap: 4,
-      maxHeight: 64,     // Limite de altura do container dos chips
-      overflowY: "auto",
-    },
-    }}
-    displayEmpty
-    renderValue={(selectedValues: string[]) => (
-            <>
-            {selectedValues.length === 0 && <em>Selecione as categorias</em>}
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                
-                {selectedValues.map((value) => (
-                <Chip color='primary' key={value} label={value} />
-                ))}
-            </Box>
-            </>
-        )}
-    onChange={handleChange}
-    value={selectedValues}
-    
-    >
+        multiple
+        fullWidth
+        color='primary'
+        MenuProps={{
+            PaperProps: {
+                style: { maxHeight: 48 * 4.5 + 8, width: 250 },
+            },
+        }}
+        sx={{
+        "& .MuiSelect-select": {
+        display: "flex",
+        flexWrap: "wrap",
+        gap: 4,
+        maxHeight: 64,   
+        overflowY: "auto",
+        },
+        }}
+        displayEmpty
+        renderValue={(selectedValues: string[]) => (
+                <>
+                {selectedValues.length === 0 && <em>Selecione as categorias</em>}
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                    
+                    {selectedValues.map((value) => (
+                    <Chip color='primary' key={value} label={options.filter((option)=>option.value === value)[0].name} />
+                    ))}
+                </Box>
+                </>
+            )}
+        onChange={handleChange}
+        value={selectedValues}
+        
+        >
         {options.map((option) => (
             <MenuItem
             sx={{
@@ -65,10 +67,10 @@ export default function MultipleSelect({ options, selectedValueSetter, selectedV
                     }
                 },
             }}
-            key={option}
-            value={option}
+            key={option.value}
+            value={option.value}
             >
-            {option}
+            {option.name}
             </MenuItem>
         ))}
     </Select>

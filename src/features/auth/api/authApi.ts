@@ -5,7 +5,7 @@ import type { iResponse } from "../../../shared/types/response"
 
 const loginUserApi = async (email: string, password: string) => {
     try {
-        const response: iResponse<{accessToken: string}> = await api.post("auth/login", { userData:{email, password} }).then(res => res.data)
+        const response: iResponse<{accessToken: string}> = await api.post("auth/login", {email, password}).then(res => res.data)
         sessionStorage.setItem("access-token", response.data?.accessToken as string) 
         return response
 

@@ -1,0 +1,197 @@
+import { use, useEffect, useState } from "react"
+import { useConfirmActionDialogStore } from "../../../../shared/store/confirmActionDialogStore"
+import { useToastStore } from "../../../../shared/store/toastStore"
+import { UserRoleTuple, type iUser, type UserRoleType } from "../../../auth/types/user"
+import { userSchema, type UserSchema } from "../../../../schemas/userSchema"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { updateUserApi } from "../../api/usersApi"
+import { Button, FormControl, Grid, InputLabel, MenuItem, Typography } from "@mui/material"
+import { StartColumnBox, StartFlexBox } from "../../../../shared/components/Boxes/Boxes"
+import EditStateButton from "../../../../shared/components/EditStateButton/EditStateButton"
+import { EditingTextField } from "../../../../shared/components/TextField/TextField"
+import { EditingSelect } from "../../../../shared/components/EditingSelect/EditingSelect"
+import { LockOutlined, PeopleAlt } from "@mui/icons-material"
+import { formatUserRole } from "../../../../shared/utils/formatters"
+import { useUserStore } from "../../stores/useUserStore"
+
+type UserEditFormProps = {
+    user: iUser | null    
+}
+
+
+export default function UserEditForm({user}: UserEditFormProps) {
+
+    const renderConfirmActionDialog = useConfirmActionDialogStore(state => state.renderConfirmActionDialog) 
+    const closeConfirmActionDialog = useConfirmActionDialogStore(state => state.handleClose)
+    const openChangePasswordDialog = useUserStore(state => state.openChangePasswordDialog)
+    const renderToast = useToastStore(state => state.renderToast)
+    const [editingUserData, setEditingUserData] = useState<iUser | null>(null)
+    const [onEditing, setOnEditing] = useState<boolean>(false)
+    const {register, handleSubmit, formState: { errors, isSubmitting }, setError} = useForm<UserSchema>({
+            resolver: zodResolver(userSchema),
+        });
+    
+        useEffect(() => {
+            setEditingUserData(user)
+        }, [user])
+
+    const handleOnSubmit = async (userData: UserSchema) => {
+        if(!user || !userData) return 
+        
+        renderConfirmActionDialog({
+            title: 'Salvar alterações?',
+            message: 'Você tem certeza que deseja salvar as alterações feitas neste usuário?',
+            confirmAction: {label: 'Salvar', onClick: async () => {
+                closeConfirmActionDialog()
+                try{
+                    let returnedData = await updateUserApi(user.id, userData);
+                     if (returnedData.success){
+                    renderToast({message: 'Edição de usuário concluída com sucesso!', type: 'success', })
+                    console.log('Edição de usuário concluída com sucesso!', returnedData.data)
+                }else{
+                    renderToast({message: returnedData.message || 'Erro ao editar usuário', type: 'error', })
+                    setEditingUserData(user)
+                }
+                }catch(error){
+                    console.log(error)
+                }
+                
+               
+            }},
+            cancelAction: {label: 'Cancelar', onClick: () => {
+                closeConfirmActionDialog()
+                setOnEditing(true)
+            }}
+        })
+    }
+
+    const handleSelectChange = (value: number | string, prop: string) => {
+        value === '' || value === null || value === 0 ?
+        
+        setEditingUserData({...editingUserData!, [prop]: null}) :
+        setEditingUserData({...editingUserData!, [prop]: value}) 
+    }
+
+
+  return (
+    <Grid component={'form'} onSubmit={handleSubmit(handleOnSubmit)} container spacing={2} mb={2}>
+        
+        <Grid container justifyContent={'space-between'} mb={4} alignItems={'center'} size={{xl: 12, lg: 12, md: 12, sm: 12, xs: 12}}>
+
+            <Grid size={{xl: 6, lg: 6, md: 6, sm: 12, xs: 12}}>
+                <StartFlexBox gap={1}>
+                    <PeopleAlt color='primary' sx={{fontSize: 48, backgroundColor: 'secondary.light', borderRadius: 1, p: 1}}/>
+                <StartColumnBox>
+                    <Typography color='primary' fontWeight={700} variant='h5'>Detalhes de Usuário</Typography>
+                    <Typography variant='body2'>Visualize todas as informações a respeito do estoque</Typography>
+                </StartColumnBox>
+                </StartFlexBox>
+            </Grid>
+            <Grid container gap={2} size={{xl: onEditing? 6 : 3, lg: onEditing? 6 : 3, md: onEditing? 6 : 3, sm: 12, xs: 12}}>
+                <EditStateButton
+                state={onEditing} 
+                setState={setOnEditing} 
+                labelEntity='usuário' 
+                cancelAction={() => setEditingUserData(user)} 
+                confirmAction={() => handleOnSubmit(editingUserData as UserSchema)}/>
+            </Grid>
+        </Grid>
+        
+        <Grid size={{lg: 4, md: 4, sm: 12, xs: 12}}>
+            <EditingTextField
+            sx={{ height: '100%'}} 
+            slotProps={{ inputLabel: {shrink: true} }}
+            fullWidth 
+            variant='outlined'
+            label="Nome" 
+            {...register("name")} 
+            error={!!errors.name}
+            disabled={!onEditing}
+            helperText={errors.name?.message}
+            value={editingUserData?.name}
+            onChange={(e)=> setEditingUserData({...editingUserData!, name: e.target.value})}
+            />
+        </Grid>
+        <Grid size={{lg: 4, md: 4, sm: 12, xs: 12}}>
+            <EditingTextField
+            sx={{ height: '100%'}} 
+            slotProps={{ inputLabel: {shrink: true} }}
+            fullWidth 
+            variant='outlined'
+            label="Usuário" 
+            {...register("username")} 
+            error={!!errors.username}
+            disabled={!onEditing}
+            helperText={errors.username?.message}
+            value={editingUserData?.username}
+            onChange={(e)=> setEditingUserData({...editingUserData!, username: e.target.value})}
+            />
+        </Grid>
+        <Grid size={{lg: 4, md: 4, sm: 12, xs: 12}}>
+            <EditingTextField
+            sx={{ height: '100%'}} 
+            slotProps={{ inputLabel: {shrink: true} }}
+            fullWidth 
+            variant='outlined'
+            label="ID"  
+            disabled
+            value={editingUserData?.id}
+            
+            />
+        </Grid>
+        <Grid size={{lg: 4, md: 4, sm: 12, xs: 12}}>
+            <FormControl fullWidth>
+                <InputLabel id="select-role">Permisão</InputLabel>
+                <EditingSelect
+                fullWidth
+                variant='outlined' 
+                label="Permisão" 
+                sx={{"& .MuiInputBase-input.Mui-disabled": {WebkitTextFillColor: 'currentcolor'}}}
+                labelId="select-role"
+                {...register("role")} 
+                onChange={(event)=> handleSelectChange(event.target.value as UserRoleType, 'role')}
+                error={!!errors.role}
+                disabled={!onEditing}
+                value={editingUserData?.role ?? 'USER'}
+                required>
+                    {UserRoleTuple.map((role) => <MenuItem
+                    key={role} 
+                    value={role === null? '' : role}>
+                        <Typography 
+                        borderRadius={2}
+                        width={'fit-content'}
+                        px={2}
+                        color={role === 'ADMIN'? 'info.dark' : role === 'USER'? 'success.dark' : 'warning.dark'}
+                        bgcolor={role === 'ADMIN'? 'info.light' : role === 'USER'? 'success.light' : 'warning.light'}
+                        >
+                         {formatUserRole(role)}
+                        </Typography>
+                    </MenuItem>)}
+                </EditingSelect>
+            </FormControl>
+        </Grid>
+        <Grid size={{lg: 4, md: 4, sm: 12, xs: 12}}>
+            <EditingTextField
+            sx={{ height: '100%'}} 
+            slotProps={{ inputLabel: {shrink: true}}}
+            fullWidth 
+            variant='outlined'
+            label="Email" 
+            {...register("email")} 
+            error={!!errors.email}
+            disabled={!onEditing}
+            helperText={errors.email?.message}
+            value={editingUserData?.email}
+            onChange={(e)=> setEditingUserData({...editingUserData!, email: e.target.value})}
+            />
+        </Grid>
+        <Grid size={{lg: 4, md: 4, sm: 12, xs: 12}}>
+            <Button disabled={!onEditing} sx={{height: '100%', padding: 1.5, textTransform: 'none', gap: 1, }} onClick={openChangePasswordDialog} variant="outlined" fullWidth>
+                <Typography fontWeight={500}>Alterar senha</Typography>
+                <LockOutlined/>
+            </Button>
+        </Grid>
+    </Grid>
+  )
+}

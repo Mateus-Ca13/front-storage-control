@@ -1,9 +1,9 @@
 import { Divider, Drawer, List, styled, Typography, type DrawerProps } from "@mui/material";
-import { useState } from "react";
+import { use, useState } from "react";
 import type { SidebarItem } from "../../types/sidebarListItems";
 import { AccountCircle, AddCircleOutlineRounded, ControlPointRounded, 
     DashboardRounded, DiscountRounded, ExitToAppOutlined, 
-    FormatListBulletedRounded, Help, Inventory2Rounded, 
+    FormatListBulletedRounded, Help, CategoryRounded, 
     PeopleAlt, RemoveCircleOutlineRounded, 
     Settings, 
     SwapHorizontalCircleOutlined, SyncAltOutlined, 
@@ -11,6 +11,8 @@ import { AccountCircle, AddCircleOutlineRounded, ControlPointRounded,
 import SidebarListItem from "./SidebarListItem/SidebarListItem";
 import { CenterFlexBox } from "../Boxes/Boxes";
 import { theme } from "../../../theme/theme";
+import { useNavigate } from "react-router-dom";
+import { persistCategorySearchFilter, persistMovementSearchFilter, persistProductSearchFilter, persistStockSearchFilter, persistUserSearchFilter } from "../../utils/persistSearchFilter";
 
 
 const SidebarDrawer =  styled(Drawer)<DrawerProps>({
@@ -31,6 +33,7 @@ const SidebarDrawer =  styled(Drawer)<DrawerProps>({
 
 export default function DashboardSidebar() {
     const [open, setOpen] = useState<boolean>(false);
+    const navigate = useNavigate();
     const drawerWidth = 320;
     const closedWidth = 60;
 
@@ -41,20 +44,12 @@ export default function DashboardSidebar() {
             { type: 'button', text: 'Nova Saída', onClick: ()=>{},  icon: <RemoveCircleOutlineRounded/> },
             { type: 'button', text: 'Nova Transferência', onClick: ()=>{},  icon: <SwapHorizontalCircleOutlined/> },
         ] },
-        { type: 'accordion', text: 'Produtos', icon: <Inventory2Rounded/>, children: [
-            { type: 'button', text: 'Cadastrar Produto', onClick: ()=>{}, icon: <AddCircleOutlineRounded/> },
-            { type: 'link', text: 'Ver Produtos', path: '/dashboard/products', icon: <FormatListBulletedRounded/> }
-            ],
-        },
-        { type: 'accordion', text: 'Estoques', icon: <WarehouseRounded/>, children: [
-            { type: 'button', text: 'Cadastrar Estoque', onClick: ()=>{}, icon: <AddCircleOutlineRounded/> },
-            { type: 'link', text: 'Ver Estoques', path: '/dashboard/stocks', icon: <FormatListBulletedRounded/>},
-            ],
-        },
-        { type: 'link', text: 'Categorias', path: '/dashboard/categories', icon: <DiscountRounded/> },
-        { type: 'link', text: 'Movimentações', path: '/dashboard/movements', icon: <SyncAltOutlined/> },
+        { type: 'button', text: 'Produtos', onClick: ()=>{persistProductSearchFilter({}); navigate('/dashboard/products')}, icon: <CategoryRounded/>},
+        { type: 'button', text: 'Estoques',  onClick: ()=>{persistStockSearchFilter({}); navigate('/dashboard/stocks')}, icon: <WarehouseRounded/>},
+        { type: 'button', text: 'Categorias', onClick: ()=>{persistCategorySearchFilter({}); navigate('/dashboard/categories')}, icon: <DiscountRounded/> },
+        { type: 'button', text: 'Movimentações', onClick: ()=>{persistMovementSearchFilter({}); navigate('/dashboard/movements')}, icon: <SyncAltOutlined/> },
         { type: 'link', text: 'Caixa (Operações)', path: '/dashboard/cash', icon:  <VideoLabelOutlined/>},
-        { type: 'link', text: 'Usuários', path: '/dashboard/users', icon: <PeopleAlt/> },
+        { type: 'button', text: 'Usuários', onClick: ()=>{persistUserSearchFilter({}); navigate('/dashboard/users')}, icon: <PeopleAlt/> },
     
     ]
 

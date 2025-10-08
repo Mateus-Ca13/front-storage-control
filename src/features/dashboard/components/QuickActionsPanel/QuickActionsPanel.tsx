@@ -2,7 +2,7 @@ import { Grid, Typography } from "@mui/material";
 import { CardLayout } from "../../../../shared/components/Cards/Cards";
 import QuickActionButton from "./QuickActionButton/QuickActionButton";
 import { theme } from "../../../../theme/theme";
-import { AddCircleRounded, DoDisturbOnRounded, Inventory2Rounded, SwapHorizontalCircleRounded } from "@mui/icons-material";
+import { AddCircleRounded, DoDisturbOnRounded, CategoryRounded, SwapHorizontalCircleRounded } from "@mui/icons-material";
 import type { QuickActionButtonProps } from "../../types/QuickActionButton";
 
 export default function QuickActionsPanel() {
@@ -11,7 +11,7 @@ export default function QuickActionsPanel() {
         { title: "Nova Entrada", action: ()=>{}, message: 'Registrar a entrada de produtos', color: theme.palette.success, icon: <AddCircleRounded fontSize="large"/> },
         { title: "Nova Saída", action: ()=>{}, message: 'Registrar a saída de produtos', color: theme.palette.error, icon: <DoDisturbOnRounded fontSize="large"/> },
         { title: "Nova Transferência", action: ()=>{}, message: 'Transferir produtos entre estoques', color: theme.palette.warning, icon: <SwapHorizontalCircleRounded fontSize="large"/> },
-        { title: "Ver Produtos", action: ()=>{}, message: 'Ver todos os produtos', color: theme.palette.info, icon: <Inventory2Rounded fontSize="large"/>}
+        { title: "Ver Produtos", action: ()=>{}, message: 'Ver todos os produtos', color: theme.palette.info, icon: <CategoryRounded fontSize="large"/>}
     ]
 
     return (

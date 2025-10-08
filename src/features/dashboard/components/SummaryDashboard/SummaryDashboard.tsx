@@ -1,7 +1,7 @@
 import { Grid } from '@mui/material'
 import { CardLayout } from '../../../../shared/components/Cards/Cards'
 import SummaryCard from '../SummaryCard/SummaryCard'
-import { Inventory2Rounded, SyncAltOutlined, WarehouseRounded, WarningRounded } from '@mui/icons-material'
+import { CategoryRounded, SyncAltOutlined, WarehouseRounded, WarningRounded } from '@mui/icons-material'
 import { theme } from '../../../../theme/theme'
 import { useEffect, useState } from 'react'
 import { MainSummaryApi } from '../../api/dashboardApi'
@@ -11,10 +11,10 @@ type summaryDataProps = AsyncResponseDataProps<typeof MainSummaryApi>
 export default function SummaryDashboard() {
 
     const [summaryData, setSummaryData] = useState<summaryDataProps['data']>({
-      productsBelowMinStock: 0,
-      totalMovementsLastWeek: 0,
-      totalProductsRegistered: 0,
-      totalStockedQuantity: 0,
+      productsBelowMinStock: {value: 0, metrics: ''},
+      totalMovementsLastWeek: {value: 0, metrics: ''},
+      totalProductsRegistered: {value: 0, metrics: ''},
+      totalStockedQuantity: {value: 0, metrics: ''},
     })
 
     useEffect(() => {
@@ -36,22 +36,45 @@ export default function SummaryDashboard() {
     <>
     <Grid size={{xl: 3, lg:3, md: 6, sm: 12, xs: 12}}>
         <CardLayout sx={{ padding: 2 }}>
-          <SummaryCard icon={<Inventory2Rounded sx={{ color: theme.palette.primary.main}}/>} title="Produtos cadastrados" value={summaryData!.totalProductsRegistered} type="downgrade" warning message="Nenhuma alteração recente" />
+          <SummaryCard 
+            icon={<CategoryRounded 
+            sx={{ color: theme.palette.primary.main}}/>} 
+            title="Produtos cadastrados" 
+            value={summaryData!.totalProductsRegistered.value} 
+            type="upgrade" warning message={summaryData!.totalProductsRegistered.metrics} />
         </CardLayout>
       </Grid>
       <Grid size={{xl: 3, lg:3, md: 6, sm: 12, xs: 12}}>
         <CardLayout sx={{ padding: 2 }}>
-          <SummaryCard icon={<WarehouseRounded sx={{ color: theme.palette.primary.main}}/>} title="Produtos em estoque" value={summaryData!.totalStockedQuantity} type="upgrade" message="+12 desde ontem" />
+          <SummaryCard 
+            icon={<WarehouseRounded 
+            sx={{ color: theme.palette.primary.main}}/>} 
+            title="Produtos em estoque" 
+            value={summaryData!.totalStockedQuantity.value} 
+            type="downgrade" 
+            message={summaryData!.totalStockedQuantity.metrics} />
         </CardLayout>
       </Grid>
       <Grid size={{xl: 3, lg:3, md: 6, sm: 12, xs: 12}}>
         <CardLayout sx={{ padding: 2 }}>
-          <SummaryCard icon={<WarningRounded sx={{ color: theme.palette.primary.main}}/>} title="Produtos em alerta" value={summaryData!.productsBelowMinStock} type="warning" message="Atenção necessária" />
+          <SummaryCard 
+            icon={<WarningRounded 
+            sx={{ color: theme.palette.primary.main}}/>} 
+            title="Produtos em alerta" 
+            value={summaryData!.productsBelowMinStock.value} 
+            type="warning" 
+            message={summaryData!.productsBelowMinStock.metrics} />
         </CardLayout>
       </Grid>
       <Grid size={{xl: 3, lg:3, md: 6, sm: 12, xs: 12}}>
         <CardLayout sx={{ padding: 2 }}>
-          <SummaryCard icon={<SyncAltOutlined sx={{ color: theme.palette.primary.main}}/>} title="Movimentações nesta semana" value={summaryData!.totalMovementsLastWeek} type="normal" message="4 desde ontem" />
+          <SummaryCard 
+            icon={<SyncAltOutlined 
+            sx={{ color: theme.palette.primary.main}}/>} 
+            title="Movimentações nesta semana" 
+            value={summaryData!.totalMovementsLastWeek.value} 
+            type="normal" 
+            message={summaryData!.totalMovementsLastWeek.metrics} />
         </CardLayout>
       </Grid>
       </>
