@@ -108,3 +108,10 @@ export function formatStringToMaxLength(str: string | undefined | null, maxLengt
     }
     return str.slice(0, maxLength) + '...';
 }
+
+
+export function formatCurrency (value: string) {
+          if (!value) return "0,00";
+            const numeric = Number(value).toFixed(2)
+          return numeric.replace(".", ",");
+      }

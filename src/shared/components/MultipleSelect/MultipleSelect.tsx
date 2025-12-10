@@ -24,6 +24,7 @@ export default function MultipleSelect({ options, selectedValueSetter, selectedV
   return (
    <Select
         multiple
+        rows={2}
         fullWidth
         color='primary'
         MenuProps={{
@@ -63,7 +64,7 @@ export default function MultipleSelect({ options, selectedValueSetter, selectedV
                     backgroundColor: theme.palette.secondary.main,
                     color: theme.palette.background.default,
                     ':hover': {
-                        backgroundColor: theme.palette.secondary.light,
+                        backgroundColor: theme.palette.secondary.main,
                     }
                 },
             }}

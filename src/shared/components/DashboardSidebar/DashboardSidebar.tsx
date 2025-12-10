@@ -13,6 +13,7 @@ import { CenterFlexBox } from "../Boxes/Boxes";
 import { theme } from "../../../theme/theme";
 import { useNavigate } from "react-router-dom";
 import { persistCategorySearchFilter, persistMovementSearchFilter, persistProductSearchFilter, persistStockSearchFilter, persistUserSearchFilter } from "../../utils/persistSearchFilter";
+import { useMovementStore } from "../../../features/movement/stores/useMovementStore";
 
 
 const SidebarDrawer =  styled(Drawer)<DrawerProps>({
@@ -34,21 +35,22 @@ const SidebarDrawer =  styled(Drawer)<DrawerProps>({
 export default function DashboardSidebar() {
     const [open, setOpen] = useState<boolean>(false);
     const navigate = useNavigate();
+    const {openEntryModal, openExitModal, openTransferModal} = useMovementStore()
     const drawerWidth = 320;
     const closedWidth = 60;
 
     const mainSidebarListItems: SidebarItem[] = [
         { type: 'link', text: 'Visão Geral', path: '/dashboard', icon: <DashboardRounded/> },
         { type: 'accordion', text: 'Ações rápidas', icon: <WifiProtectedSetupRounded/>, children: [
-            { type: 'button', text: 'Nova Entrada', onClick: ()=>{debugger}, icon: <ControlPointRounded/> },
-            { type: 'button', text: 'Nova Saída', onClick: ()=>{},  icon: <RemoveCircleOutlineRounded/> },
-            { type: 'button', text: 'Nova Transferência', onClick: ()=>{},  icon: <SwapHorizontalCircleOutlined/> },
+            { type: 'button', text: 'Nova Entrada', onClick: ()=>{openEntryModal()}, icon: <ControlPointRounded/> },
+            { type: 'button', text: 'Nova Saída', onClick: ()=>{openExitModal()},  icon: <RemoveCircleOutlineRounded/> },
+            { type: 'button', text: 'Nova Transferência', onClick: ()=>{openTransferModal()},  icon: <SwapHorizontalCircleOutlined/> },
         ] },
         { type: 'button', text: 'Produtos', onClick: ()=>{persistProductSearchFilter({}); navigate('/dashboard/products')}, icon: <CategoryRounded/>},
         { type: 'button', text: 'Estoques',  onClick: ()=>{persistStockSearchFilter({}); navigate('/dashboard/stocks')}, icon: <WarehouseRounded/>},
         { type: 'button', text: 'Categorias', onClick: ()=>{persistCategorySearchFilter({}); navigate('/dashboard/categories')}, icon: <DiscountRounded/> },
         { type: 'button', text: 'Movimentações', onClick: ()=>{persistMovementSearchFilter({}); navigate('/dashboard/movements')}, icon: <SyncAltOutlined/> },
-        { type: 'link', text: 'Caixa (Operações)', path: '/dashboard/cash', icon:  <VideoLabelOutlined/>},
+        { type: 'link', text: 'Caixa (Operacional)', path: '/dashboard/withdrawal', icon:  <VideoLabelOutlined/>},
         { type: 'button', text: 'Usuários', onClick: ()=>{persistUserSearchFilter({}); navigate('/dashboard/users')}, icon: <PeopleAlt/> },
     
     ]

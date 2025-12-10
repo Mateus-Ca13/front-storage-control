@@ -51,7 +51,7 @@ export default function CategoryViewPage() {
             </CardLayout>
             <Grid size={{xl: 12, lg: 21, md: 12, sm: 12, xs: 12}}>
             <CardLayout sx={{padding: 2, width: '100%',justifyContent: 'space-between', display: 'flex', flexDirection: 'column'}} >  
-                <BetweenFlexBox flexWrap={'wrap'}>
+                <BetweenFlexBox flexWrap={'wrap'} mb={2}>
                     <Typography color='primary' fontWeight={700} variant='h5'>Produtos relacionados</Typography>
                     <CenterColumnBox>
                             <Button onClick={handleFilterProducts} size='large' sx={{ height: '100%', textTransform: 'none', gap: 1}} variant='outlined' color='primary'>Filtrar produtos com essa categoria<FilterAltRounded/></Button>

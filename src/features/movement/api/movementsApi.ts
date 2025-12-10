@@ -2,6 +2,7 @@ import type { AxiosError } from "axios"
 import api from "../../../config/api"
 import type { iResponse } from "../../../shared/types/response"
 import type { iMovementColumnConfig, iMovementFull } from "../../../shared/types/movement"
+import type { MovementSchema } from "../../../schemas/MovementSchema"
 
 type iGetMovementsReponse = iResponse<{pagination: Record<string, number>, movements: (iMovementColumnConfig)[]}>
 
@@ -36,13 +37,13 @@ export const updateMovementApi = async (id: number, data: iMovementColumnConfig)
     }
 }
 
-export const createMovementApi = async (data: iMovementColumnConfig): Promise<iResponse<iMovementColumnConfig>> => {
+export const createMovementApi = async (data: MovementSchema): Promise<iResponse<iMovementFull>> => {
     try {
         const response  = await api.post(`movements/`, data).then(res => res.data)
-        return response as iResponse<iMovementColumnConfig>
+        return response as iResponse<iMovementFull>
         
     } catch (error: AxiosError | any) { 
-        return {...error.response.data, data: {}} as iResponse<iMovementColumnConfig>
+        return {...error.response.data, data: {}} as iResponse<iMovementFull>
     }
 }
 

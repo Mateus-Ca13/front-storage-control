@@ -71,7 +71,7 @@ export default function MovementsPage() {
                     <Typography variant='body2'>Visualize a lista de movimentações registradas</Typography>
                 </StartColumnBox>
                 </StartFlexBox>
-                <Grid container spacing={2}>
+                <Grid container spacing={2} mb={2}>
                 <Grid size={{lg: 6, md: 12, sm: 12, xs: 12}}>
                     <SearchInput value={searchValue} valueSetter={setSearchValue} placeholder='Busque por estoques, usuários ou observações' />
                 </Grid>

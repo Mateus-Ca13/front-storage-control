@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { useProductsQuery } from '../../../products/hooks/useProductsQuery'
 import type { iProductColumnConfig } from '../../../../shared/types/product'
+import { persistProductSearchFilter } from '../../../../shared/utils/persistSearchFilter'
 
 export default function BelowStockSummaryPanel() {
 
@@ -20,6 +21,12 @@ export default function BelowStockSummaryPanel() {
       setBelowStockProducts(products);
     }, [data]);
 
+    const navigateToProducts = () => {
+      persistProductSearchFilter({isBelowMinStock: true})
+      navigate('/dashboard/products')
+    }
+
+
 
   return (
     <Grid size={{xl: 6, lg:6, md: 12, sm: 12, xs: 12}}>
@@ -30,7 +37,7 @@ export default function BelowStockSummaryPanel() {
         </StartColumnBox>
           <CenterColumnBox sx={{ gap: 2, mt: 3}}>
           {belowStockProducts.map((product) => <BelowStockSummaryCard onClick={()=>navigate(`products/${product.id}`)} key={product.id} product={product}/>)}
-          <Button onClick={()=>navigate('/dashboard/products')} fullWidth variant="outlined"sx={{p: 2}}>
+          <Button onClick={()=>navigateToProducts()} fullWidth variant="outlined"sx={{p: 2}}>
             <Typography fontWeight={600} sx={{textTransform: 'none'}} variant="body1">Ver todos os produtos</Typography>
           </Button>
           </CenterColumnBox>

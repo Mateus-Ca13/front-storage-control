@@ -37,6 +37,17 @@ export interface iMinimizedProductColumnConfig {
     stock: { id: number, name: string, type: StockType }
 }
 
+export interface iProductAddedToMovementColumnConfig {
+    id: number
+    codebar: string | null
+    name: string
+    measurement: ProductMeasurementType
+    pricePerUnit: number
+    quantity: number
+    totalPrice: number
+    excludeAction: (...args: any[]) => any
+}
+
 
 export type ProductUpdateInput = Partial<Omit<iProduct, 'id' | 'createdAt' | 'isBelowMinStock' | 'stockedQuantities' | 'movements' >>;
 

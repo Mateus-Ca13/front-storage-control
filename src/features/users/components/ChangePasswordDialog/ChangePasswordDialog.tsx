@@ -1,4 +1,4 @@
-import { VisibilityOffRounded, VisibilityRounded } from '@mui/icons-material'
+import { LockOutlined, VisibilityOffRounded, VisibilityRounded } from '@mui/icons-material'
 import { EditingTextField } from '../../../../shared/components/TextField/TextField'
 import { useUserStore } from '../../stores/useUserStore'
 import { Alert, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, InputAdornment, Typography } from '@mui/material'
@@ -9,6 +9,7 @@ import { useForm } from 'react-hook-form'
 import { useToastStore } from '../../../../shared/store/toastStore'
 import type { iUser } from '../../../auth/types/user'
 import { updateUserPasswordApi } from '../../api/usersApi'
+import { StartColumnBox, StartFlexBox } from '../../../../shared/components/Boxes/Boxes'
 
 type UserEditFormProps = {
     user: iUser | null    
@@ -42,9 +43,7 @@ export default function ChangePasswordDialog({ user }: UserEditFormProps) {
                 setError( 'currentPassword', {message: returnedData.message || 'Erro ao alterar senha.'})
             }else {
                 setError( 'root', {message: returnedData.message || 'Erro ao alterar senha.'})
-            }
-            
-            renderToast({message: returnedData.message || 'Erro ao alterar senha.', type: 'error', })
+            }            
             setEditingUserData(user)
         }
     }
@@ -62,8 +61,13 @@ export default function ChangePasswordDialog({ user }: UserEditFormProps) {
         aria-describedby="alert-dialog-description"
         >
             <DialogTitle pb={0} id="alert-dialog-title">
-                <Typography variant='h6'>Alterar senha de usuário</Typography>
-                <Typography variant='body2'>Altere a senha de <strong>{user?.name}</strong></Typography>
+                <StartFlexBox gap={1}>
+                    <LockOutlined sx={{fontSize: 48, backgroundColor: 'secondary.light', borderRadius: 1, p: 1}}/>
+                    <StartColumnBox>
+                        <Typography variant='h6'>Alterar senha de usuário</Typography>
+                        <Typography variant='body2'>Altere a senha de <strong>{user?.name}</strong></Typography>
+                    </StartColumnBox>
+                </StartFlexBox>
                 </DialogTitle>
             <DialogContent>
             <DialogContentText id="alert-dialog-description">

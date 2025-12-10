@@ -14,10 +14,19 @@ import StockViewPage from "../features/stocks/pages/StockViewPage"
 import CategoryViewPage from "../features/category/pages/CategoryViewPage"
 import MovementViewPage from "../features/movement/pages/MovementViewPage"
 import UserViewPage from "../features/users/pages/UserViewPage"
+import WithdrawalPage from "../features/withdrawal/pages/WithdrawalPage"
+import { useEffect } from "react"
+import { useShortcutContextStore } from "../shared/store/keyboardShortcutsStore"
 
 function AppRoutes() {
 
+  const handleKeyDown = useShortcutContextStore(state => state.handleKeyDown);
   const queryClient = new QueryClient();
+  
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleKeyDown]);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -36,7 +45,7 @@ function AppRoutes() {
                   <Route path="stocks/:id" element={<StockViewPage/>} />
                   <Route path="movements" element={<MovementsPage/>} />
                   <Route path="movements/:id" element={<MovementViewPage/>} />
-                  <Route path="cash" element={<h1>Cash Page</h1>} />
+                  <Route path="withdrawal" element={<WithdrawalPage/>} />
                   <Route path="users" element={<UsersPage/>} />
                   <Route path="users/:id" element={<UserViewPage/>} />
                   <Route path="help" element={<h1>Help Page</h1>} />

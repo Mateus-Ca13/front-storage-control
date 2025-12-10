@@ -1,5 +1,5 @@
 import { Box, Paper, Tab, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Typography } from '@mui/material';
-import React, { useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import type { ColumnConfig } from '../../types/columnConfig';
 import { theme } from '../../../theme/theme';
 
@@ -17,11 +17,15 @@ type ListingTableProps<T> = {
     setRowsPerPage: (number: number) => void
     height?: number | string;
     noPagination?: boolean;
+    noRowsText?: string
+    biggerText?: boolean;
+    autoRoll?: boolean;
 }
 
-export default function ListingTable<T>({items, total, columns, onRowClick, rowKey, page, setPage, rowsPerPage, setRowsPerPage, height, noPagination }: ListingTableProps<T>) {
+export default function ListingTable<T>({items, total, columns, onRowClick, rowKey, page, setPage, rowsPerPage, setRowsPerPage, height, autoRoll = false, noPagination, noRowsText, biggerText }: ListingTableProps<T>) {
 
     const rowsPerPageOptions = useRef([rowsPerPage, rowsPerPage * 2, rowsPerPage * 5, rowsPerPage * 10]);
+    const tableContainerRef = useRef<HTMLDivElement>(null);
 
     const handleChangePage = (_: unknown, newPage: number) => {
         setPage(newPage);
@@ -32,9 +36,22 @@ export default function ListingTable<T>({items, total, columns, onRowClick, rowK
         setPage(0);
     };
 
+    useEffect(() => {
+      if (autoRoll && items.length > 0) {
+        const tableContainer = tableContainerRef.current;
+        if (tableContainer) {
+          tableContainer.scrollTo({
+            top: tableContainer.scrollHeight,
+            behavior: 'smooth',
+          });
+        }
+      }
+    }, [items, autoRoll]);
+             
+
   return (
-    <Paper sx={{ width: '100%', overflow: 'hidden', mt: 2 }}>
-      <TableContainer sx={{ height: height?? 610 /* Altura Padrão */ }}>
+    <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+      <TableContainer ref={tableContainerRef} sx={{ height: height?? 600 /* Altura Padrão */ }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
@@ -53,11 +70,11 @@ export default function ListingTable<T>({items, total, columns, onRowClick, rowK
             {items.length > 0 ?
              items.map((row) => {
                 return (
-                  <TableRow sx={{':hover': {cursor: 'pointer'}}} onClick={(e)=>onRowClick!(row)} hover role="checkbox" tabIndex={-1} key={rowKey(row)}>
+                  <TableRow  sx={{':hover': {cursor: 'pointer',}}} onClick={(e)=>onRowClick!(row)} hover role="checkbox" tabIndex={-1} key={rowKey(row)}>
                     {columns.map((column) => {
-                      const value = row[column.key as keyof T];
+                      const value = row[column.key as keyof T ];
                       return (
-                        <TableCell key={String(column.key)} align={column.align}>
+                        <TableCell sx={{ fontSize: biggerText? 22 : 15}} key={String(column.key)} align={column.align}>
                           {column.format ? column.format(value, row) : (value as React.ReactNode)}
                         </TableCell>
                       );
@@ -66,8 +83,8 @@ export default function ListingTable<T>({items, total, columns, onRowClick, rowK
                 );
               }):
               <TableRow>
-                <TableCell color='grey.300' colSpan={columns.length} align="center">
-                  <em>Sem registros encontrados.</em>
+                <TableCell sx={{ fontSize: biggerText? 22 : 15}} color='grey.300' colSpan={columns.length} align="center">
+                  <em>{noRowsText?? 'Sem registros encontrados.'}</em>
                 </TableCell>
               </TableRow>
           }

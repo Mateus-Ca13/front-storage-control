@@ -40,7 +40,7 @@ export const theme = createTheme({
       
         main: "#ff9800",
         light: lighten('#ff9800', 0.9),
-        dark: darken('#ff9800', 0.2),
+        dark: darken('#ff9900ff', 0.2),
     },
     error: {
         main: "#f44336",
@@ -63,7 +63,7 @@ export const theme = createTheme({
         category2: { main: "#2fbdffff", light: lighten('#2fbdffff', 0.9), dark: darken('#2fbdffff', 0.2)},
         category3: {main:"#ff9448ff", light: lighten('#ff9448ff', 0.9), dark: darken('#ff9448ff', 0.2)},
         category4: { main:"#85ac3eff", light: lighten('#85ac3eff', 0.9), dark: darken('#85ac3eff', 0.2)},
-        category5: { main:"#ebda26ff", light: lighten('#faeb43ff', 0.9), dark: darken('#faeb43ff', 0.2)},
+        category5: { main:"#ebda26ff", light: lighten('#ebda26ff', 0.9), dark: darken('#ebda26ff', 0.2)},
         category6: { main:"#ff69d9ff", light: lighten('#ff69d9ff', 0.9), dark: darken('#ff69d9ff', 0.2)},
         category7: { main:"#a732caff", light: lighten('#a732caff', 0.9), dark: darken('#a732caff', 0.2)},
         category8: { main:"#2ee7c8ff", light: lighten('#2ee7c8ff', 0.9), dark: darken('#2ee7c8ff', 0.2)},

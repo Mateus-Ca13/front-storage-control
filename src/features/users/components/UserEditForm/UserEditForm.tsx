@@ -142,11 +142,13 @@ export default function UserEditForm({user}: UserEditFormProps) {
         </Grid>
         <Grid size={{lg: 4, md: 4, sm: 12, xs: 12}}>
             <FormControl fullWidth>
-                <InputLabel id="select-role">Permisão</InputLabel>
+                <InputLabel shrink id="select-role">Função</InputLabel>
                 <EditingSelect
                 fullWidth
                 variant='outlined' 
-                label="Permisão" 
+                label="Função" 
+                displayEmpty
+                defaultValue=""
                 sx={{"& .MuiInputBase-input.Mui-disabled": {WebkitTextFillColor: 'currentcolor'}}}
                 labelId="select-role"
                 {...register("role")} 
@@ -189,7 +191,7 @@ export default function UserEditForm({user}: UserEditFormProps) {
         <Grid size={{lg: 4, md: 4, sm: 12, xs: 12}}>
             <Button disabled={!onEditing} sx={{height: '100%', padding: 1.5, textTransform: 'none', gap: 1, }} onClick={openChangePasswordDialog} variant="outlined" fullWidth>
                 <Typography fontWeight={500}>Alterar senha</Typography>
-                <LockOutlined/>
+                <LockOutlined fontSize="small"/>
             </Button>
         </Grid>
     </Grid>

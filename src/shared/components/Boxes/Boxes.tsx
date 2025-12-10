@@ -43,6 +43,15 @@ export const BetweenFlexBox = styled(Box)<BoxProps>({
   width: '100%'
 });
 
+export const BetweenColumnBox = styled(Box)<BoxProps>({
+  display: "flex",
+  flexDirection: "column",  
+  justifyContent: "space-between",
+  alignItems: "center",
+  height: '100%',
+});
+
+
 export const FullScreenBoxLayout = styled(Box)<BoxProps>({
   display: "flex",
   flexDirection: "column",

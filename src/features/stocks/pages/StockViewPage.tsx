@@ -59,7 +59,7 @@ export default function StockViewPage() {
                             <Button onClick={handleFilterProducts} size='large' sx={{ height: '100%', textTransform: 'none', gap: 1}} variant='outlined' color='primary'>Filtrar produtos deste estoque<FilterAltRounded/></Button>
                     </CenterColumnBox>
                 </BetweenFlexBox>
-                <Grid size={{xl: 12, lg: 12, md: 12, sm: 12, xs: 12}} mt={2} container spacing={2}>
+                <Grid size={{xl: 12, lg: 12, md: 12, sm: 12, xs: 12}} mt={4} container spacing={2}>
                     <ListingTable
                     total={productsData?.data.pagination.total ?? products.length}
                     page={page} setPage={setPage} 

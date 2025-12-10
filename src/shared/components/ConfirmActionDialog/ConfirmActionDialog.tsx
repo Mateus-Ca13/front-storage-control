@@ -1,6 +1,7 @@
 
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material'
 import { useConfirmActionDialogStore } from '../../store/confirmActionDialogStore';
+import { useKeyboardShortcuts } from '../../hooks/useKeyboardShortcuts';
 
 
 
@@ -14,8 +15,19 @@ export default function ConfirmActionDialog() {
     const confirmAction = useConfirmActionDialogStore(state => state.confirmAction);
     const cancelAction = useConfirmActionDialogStore(state => state.cancelAction);
 
+    useKeyboardShortcuts({
+        'Escape': () => {
+            cancelAction?.onClick();
+        },
+        'Enter': () => {
+            confirmAction?.onClick();
+        }
+    }, 2);
+
+
   return (
       <Dialog
+        
         open={open}
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
@@ -29,9 +41,10 @@ export default function ConfirmActionDialog() {
             {message}
           </DialogContentText>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={cancelAction?.onClick} variant='text'>{cancelAction?.label}</Button>
-          <Button onClick={confirmAction?.onClick} variant='text'>{confirmAction?.label}</Button>
+        <DialogActions
+        sx={{ p: 1.5}}>
+          <Button onClick={cancelAction?.onClick} variant='outlined'>{cancelAction?.label}</Button>
+          <Button onClick={confirmAction?.onClick} variant='contained'>{confirmAction?.label}</Button>
         </DialogActions>
       </Dialog>
   )

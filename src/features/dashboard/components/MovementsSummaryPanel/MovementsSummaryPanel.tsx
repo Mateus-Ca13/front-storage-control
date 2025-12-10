@@ -14,7 +14,7 @@ export default function MovementsSummaryPanel() {
 
     const [movements, setMovements] = useState<iMovementColumnConfig[]>([])
 
-    const { data, isLoading, error } = useMovementsQuery(0, 3, '', {orderBy: 'desc', sortBy: 'createdAt'})
+    const { data, isLoading, error } = useMovementsQuery(0, 5, '', {orderBy: 'desc', sortBy: 'createdAt'})
 
     useEffect(() => {
         const movements = data?.data?.movements ?? [];

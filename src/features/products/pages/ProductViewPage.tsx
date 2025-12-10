@@ -10,7 +10,7 @@ import { Category, InfoOutlineRounded, SyncAltOutlined, Warning } from '@mui/ico
 import { formatMeasurementUnit } from '../../../shared/utils/formatters'
 import { TwoColorsChip } from '../../../shared/components/Chips/Chips'
 import ListingTable from '../../../shared/components/ListingTable/ListingTable'
-import { minimizedProductMovementsTableColumns, minimizedProductsTableColumns } from '../helpers/productsTableColumns'
+import { productMovementsTableColumns, minimizedProductsTableColumns } from '../helpers/productsTableColumns'
 
 export default function ProductViewPage() {
     const navigate = useNavigate()
@@ -36,7 +36,7 @@ export default function ProductViewPage() {
             </CardLayout>
             <Grid size={{xl: 6, lg: 6, md: 6, sm: 12, xs: 12}}>
             <CardLayout sx={{padding: 2, width: '100%',justifyContent: 'space-between', display: 'flex', flexDirection: 'column'}} >  
-                <StartFlexBox flexWrap={'wrap'} columnGap={2} rowGap={1}>
+                <StartFlexBox flexWrap={'wrap'} columnGap={2} rowGap={1}  mb={2}>
                     <Typography color='primary' fontWeight={700} variant='h5'>Quantidade em estoque</Typography>
                     {product?.isBelowMinStock &&
                     <TwoColorsChip 
@@ -75,13 +75,13 @@ export default function ProductViewPage() {
             <Grid size={{xl: 6, lg: 6, md: 6, sm: 12, xs: 12}}>
             <CardLayout sx={{padding: 2, width: '100%', justifyContent: 'space-between', display: 'flex', flexDirection: 'column'}}>
                 <Typography color='primary' fontWeight={700} variant='h5'>Últimas movimentações</Typography>
-                <Grid size={{xl: 12, lg: 12, md: 12, sm: 12, xs: 12}} mt={2} container spacing={2}>
+                <Grid size={{xl: 12, lg: 12, md: 12, sm: 12, xs: 12}} mt={4} container spacing={2}>
                     <ListingTable
                     noPagination
                     total={product?.movements!.length ?? 0}
                     page={0} setPage={()=>{}} 
                     rowsPerPage={100} setRowsPerPage={()=>{}} 
-                    columns={minimizedProductMovementsTableColumns} 
+                    columns={productMovementsTableColumns} 
                     items={product?.movements! ? product?.movements.map(mov => ({...mov, quantity: `${mov.quantity} (${product.measurement})`})) : []} 
                     rowKey={(row) => row.id} 
                     height={210}

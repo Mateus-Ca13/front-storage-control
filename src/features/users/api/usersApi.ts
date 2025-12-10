@@ -3,7 +3,7 @@ import api from "../../../config/api"
 import type { iResponse } from "../../../shared/types/response"
 import type { iUserColumnConfig } from "../../../shared/types/user"
 import type { iUser } from "../../auth/types/user"
-import type { PasswordSchema, UserSchema } from "../../../schemas/userSchema"
+import type { CreateUserDTO, PasswordSchema, UserSchema } from "../../../schemas/userSchema"
 
 type iGetUsersReponse = iResponse<{pagination: Record<string, number>, users: (iUserColumnConfig)[]}>
 
@@ -49,7 +49,7 @@ export const updateUserPasswordApi = async (id: number, passwordData: PasswordSc
 }
 
 
-export const createUserApi = async (data: UserSchema): Promise<iResponse<iUser>> => {
+export const createUserApi = async (data: CreateUserDTO): Promise<iResponse<iUser>> => {
     try {
         const response  = await api.post(`users/`, data).then(res => res.data)
         return response as iResponse<iUser>

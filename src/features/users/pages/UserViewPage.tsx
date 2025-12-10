@@ -17,7 +17,7 @@ export default function UserViewPage() {
         if(data?.data){
             console.log(data.data)
             setUser(data.data)
-            debugger
+            
         }
     }, [data])
 

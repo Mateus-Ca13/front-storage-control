@@ -27,6 +27,16 @@ export const getProductById = async (id: number): Promise<iResponse<iProduct>> =
     }
 }
 
+export const getProductByCodebar = async (codebar: string, stockId: number): Promise<iResponse<iProduct>> => {
+    try {
+        const response  = await api.get(`products/codebar/${codebar}`, {params: {stockId: stockId}}).then(res => res.data)
+        return response as iResponse<iProduct>
+        
+    } catch (error: AxiosError | any) {
+        return {...error.response.data, data: {}} as iResponse<iProduct>
+    }
+}
+
 export const updateProductApi = async (id: number, data: ProductSchema): Promise<iResponse<iProduct>> => {
     try {
         const response  = await api.put(`products/${id}`, data).then(res => res.data)

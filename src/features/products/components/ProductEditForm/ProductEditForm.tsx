@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form'
 import { productSchema, type ProductSchema } from '../../../../schemas/productSchema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { updateProductApi } from '../../api/productsApi'
-import { formatMeasurementUnit, formatTimestamp } from '../../../../shared/utils/formatters'
+import { formatCurrency, formatMeasurementUnit, formatTimestamp } from '../../../../shared/utils/formatters'
 import { EditingTextField } from '../../../../shared/components/TextField/TextField'
 import { theme } from '../../../../theme/theme'
 import { EditingSelect } from '../../../../shared/components/EditingSelect/EditingSelect'
@@ -75,12 +75,6 @@ const {register, handleSubmit, formState: { errors, isSubmitting }, setError} = 
         
         setEditingProductData({...editingProductData!, [prop]: null}) :
         setEditingProductData({...editingProductData!, [prop]: value}) 
-    }
-
-    const formatCurrency = (value: string) => {
-        if (!value) return "0,00";
-         const numeric = Number(value).toFixed(2)
-        return numeric.replace(".", ",");
     }
 
   return (
@@ -159,7 +153,7 @@ const {register, handleSubmit, formState: { errors, isSubmitting }, setError} = 
             <Grid size={{lg: 4, md: 4, sm: 12, xs: 12}}>
                 <EditingTextField 
                 multiline
-                minRows={4}
+                rows={4}
                 sx={{height: '100%', flex: 1}}
                 slotProps={{ inputLabel: {shrink: true} }}
                 fullWidth
@@ -185,7 +179,7 @@ const {register, handleSubmit, formState: { errors, isSubmitting }, setError} = 
                     helperText={errors.lastPrice?.message}
                     value={formatCurrency(editingProductData?.lastPrice?.toString() ?? "")}
                     onChange={(e) => {
-                        debugger
+                        
                         const raw = e.target.value;
                         const numeric = raw.replace(/\D/g, ""); 
                         const value = Number(numeric) / 100; 

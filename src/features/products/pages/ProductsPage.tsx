@@ -10,6 +10,8 @@ import type { iProductColumnConfig } from '../../../shared/types/product'
 import { useProductsQuery } from '../hooks/useProductsQuery'
 import { productsTableColumns } from '../helpers/productsTableColumns'
 import { persistProductSearchFilter } from '../../../shared/utils/persistSearchFilter'
+import CreateProductDialog from '../components/CreateProductDialog/CreateProductDialog'
+import { useProductStore } from '../stores/useProductStore'
 
 export type ProductsSearchFiltersProps = {
   stockId?: number;  
@@ -21,6 +23,7 @@ export type ProductsSearchFiltersProps = {
 }
 
 export default function ProductsPage() {
+    const openCreateModal = useProductStore((state) => state.openCreateModal)
     const isFirstRender = useRef(true);   
     const [page, setPage] = useState<number>(0);
     const [rowsPerPage, setRowsPerPage] = useState<number>(10);
@@ -72,7 +75,7 @@ export default function ProductsPage() {
                     <Typography variant='body2'>Visualize a lista de produtos cadastrados</Typography>
                 </StartColumnBox>
                 </StartFlexBox>
-                <Grid container spacing={2}>
+                <Grid container spacing={2} mb={2}>
                 <Grid size={{lg: 6, md: 12, sm: 12, xs: 12}}>
                     <SearchInput value={searchValue} valueSetter={setSearchValue} placeholder='Busque por nome, descrição ou código de barras' />
                 </Grid>
@@ -80,7 +83,7 @@ export default function ProductsPage() {
                     <Button onClick={()=>setFilterMenuIsOpen(true)} size='large' sx={{ height: '100%', textTransform: 'none', gap: 1}} variant='outlined' color='primary' fullWidth>Filtrar produtos <FilterAltRounded/></Button>
                 </Grid>
                 <Grid size={{lg: 3, md: 6, sm: 12, xs: 12}}>
-                    <Button size='large' sx={{ height: '100%', textTransform: 'none', gap: 1}} variant='contained' fullWidth>Criar produto<AddCircleOutlineRounded/></Button>
+                    <Button onClick={()=>openCreateModal()} size='large' sx={{ height: '100%', textTransform: 'none', gap: 1}} variant='contained' fullWidth>Criar produto<AddCircleOutlineRounded/></Button>
                 </Grid>
                 </Grid>
                 <ListingTable
@@ -93,6 +96,7 @@ export default function ProductsPage() {
             </CardLayout>
             
         </Grid>
+        <CreateProductDialog/>
         <ProductFiltersSidebar filters={searchFilters} setFiltersProps={setSearchFilters} open={filterMenuIsOpen} toggleDrawer={setFilterMenuIsOpen} />
     </Grid>
   )

@@ -1,13 +1,15 @@
-import { ArrowForwardIosRounded, ArrowForwardRounded, CancelRounded, Category, CheckCircleRounded, ErrorRounded } from "@mui/icons-material";
+import { ArrowForwardIosRounded, ArrowForwardRounded, CancelRounded, Category, CheckCircleRounded, DeleteOutlineRounded, ErrorRounded } from "@mui/icons-material";
 import { CenterFlexBox } from "../../../shared/components/Boxes/Boxes";
 import { CategoryChip, TwoColorsChip } from "../../../shared/components/Chips/Chips";
 import type { ColumnConfig } from "../../../shared/types/columnConfig";
-import type { iMinimizedProductColumnConfig, iProductColumnConfig } from "../../../shared/types/product";
+import type { iMinimizedProductColumnConfig, iProductAddedToMovementColumnConfig, iProductColumnConfig } from "../../../shared/types/product";
 import { formatMovementType, formatPrice, formatStockType, formatStringToMaxLength, formatTimestamp } from "../../../shared/utils/formatters";
 import TableActionsMenu from "../../../shared/components/TableActionsMenu/TableActionsMenu";
 import { productsMenuActions } from "./productsMenuActions";
 import type { iMinimizedProductMovementsColumnConfig } from "../../../shared/types/movement";
-import { Typography } from "@mui/material";
+import { Button, Typography } from "@mui/material";
+import type { AddProductToMovementSchema } from "../../../schemas/MovementSchema";
+import { LightTooltip } from "../../../shared/components/Tooltip/Tooltip";
 
 
 export const productsTableColumns: ColumnConfig<iProductColumnConfig>[] = [
@@ -103,7 +105,7 @@ export const minimizedProductsTableColumns: ColumnConfig<iMinimizedProductColumn
     }
 ]
 
-export const minimizedProductMovementsTableColumns: ColumnConfig<iMinimizedProductMovementsColumnConfig>[] = [
+export const productMovementsTableColumns: ColumnConfig<iMinimizedProductMovementsColumnConfig>[] = [
     {
         key: 'movementDate',
         header: 'Data/Horário',
@@ -146,4 +148,85 @@ export const minimizedProductMovementsTableColumns: ColumnConfig<iMinimizedProdu
 
     },
 ]
+
+export const minimizedProductMovementsTableColumns: ColumnConfig<iProductAddedToMovementColumnConfig>[] = [
+
+    {
+        key: 'codebar',
+        header: 'Código',
+        align: 'center',
+        minWidth: 20,
+    },
+    {
+        key: 'name',
+        header: 'Produto',
+        align: 'center',
+        minWidth: 100,
+    },
+    {
+        key: 'quantity',
+        header: 'Quantidade',
+        align: 'center',
+        minWidth: 50,
+    },
+    {
+        key: 'pricePerUnit',
+        header: 'Preço Unitário',
+        align: 'center',
+        minWidth: 50,
+        format: (value, product) => `R$ ${formatPrice(product?.pricePerUnit?? 0)}`
+    },
+    {
+        key: 'totalPrice',
+        header: 'Preço Total',
+        align: 'center',
+        minWidth: 50,
+        format: (value, product) => `R$ ${formatPrice((product?.pricePerUnit ?? 0) * (product?.quantity ?? 0))}`
+    },
+    {
+        key: 'action',
+        header: 'Ação',
+        align: 'center',
+        minWidth: 50,
+        format: (value, product) => <LightTooltip title="Excluir"><Button onClick={() => product?.excludeAction()}><DeleteOutlineRounded color="error"/></Button></LightTooltip>
+        
+    },
+]
+export const withdrawalProductMovementsTableColumns: ColumnConfig<iProductAddedToMovementColumnConfig>[] = [
+
+    {
+        key: 'codebar',
+        header: 'ID',
+        align: 'center',
+        minWidth: 20,
+    },
+    {
+        key: 'name',
+        header: 'Produto',
+        align: 'center',
+        minWidth: 100,
+    },
+    {
+        key: 'quantity',
+        header: 'Quantidade',
+        align: 'center',
+        minWidth: 50,
+    },
+    {
+        key: 'pricePerUnit',
+        header: 'Preço Unitário',
+        align: 'center',
+        minWidth: 50,
+        format: (value, product) => `R$ ${formatPrice(product?.pricePerUnit?? 0)}`
+    },
+    {
+        key: 'totalPrice',
+        header: 'Preço Total',
+        align: 'center',
+        minWidth: 50,
+        format: (value, product) => `R$ ${formatPrice((product?.pricePerUnit ?? 0) * (product?.quantity ?? 0))}`
+    },
+]
+
+
 

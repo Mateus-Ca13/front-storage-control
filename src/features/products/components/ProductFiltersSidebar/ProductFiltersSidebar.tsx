@@ -114,27 +114,9 @@ export default function ProductFiltersSidebar({open, toggleDrawer, filters, setF
                         }}
                         >
                             <MenuItem
-                            sx={{
-                                "&.Mui-selected": {
-                                    backgroundColor: theme.palette.secondary.main,
-                                    color: theme.palette.background.default,
-                                    ':hover': {
-                                        backgroundColor: theme.palette.secondary.light,
-                                    }
-                                },
-                            }} 
                             value={''}><em>Todos</em></MenuItem>
                             {stocks.map((stock)=>(
                             <MenuItem 
-                            sx={{
-                                "&.Mui-selected": {
-                                    backgroundColor: theme.palette.secondary.main,
-                                    color: theme.palette.background.default,
-                                    ':hover': {
-                                        backgroundColor: theme.palette.secondary.light,
-                                    }
-                                },
-                            }} 
                             key={stock.value} value={stock.value}>{stock.name}</MenuItem>
                             ))}
                         </Select>

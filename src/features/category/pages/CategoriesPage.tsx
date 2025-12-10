@@ -10,6 +10,8 @@ import type { iCategoryColumnConfig } from '../../../shared/types/category'
 import { useCategoryQuery } from '../hooks/useCategoryQuery'
 import CategoriesFiltersSidebar from '../components/CategoriesFiltersSidebar/CategoriesFiltersSidebar'
 import { persistCategorySearchFilter } from '../../../shared/utils/persistSearchFilter'
+import CreateCategoryDialog from '../components/CreateCategoryDialog/CreateCategoryDialog'
+import { useCategoryStore } from '../stores/useCategoryStore'
 
 export type CategoriesSearchFiltersProps = {
   orderBy?: 'asc' | 'desc';
@@ -17,6 +19,7 @@ export type CategoriesSearchFiltersProps = {
 }
 
 export default function CategoriesPage() {
+    const openCreateModal = useCategoryStore((state) => state.openCreateModal)
     const isFirstRender = useRef(true);
     const [page, setPage] = useState<number>(0);
     const [rowsPerPage, setRowsPerPage] = useState<number>(10);
@@ -60,7 +63,7 @@ export default function CategoriesPage() {
                     <Typography variant='body2'>Visualize a lista de categorias cadastradas</Typography>
                 </StartColumnBox>
                 </StartFlexBox>
-                <Grid container spacing={2}>
+                <Grid container spacing={2} mb={2}>
                 <Grid size={{lg: 6, md: 12, sm: 12, xs: 12}}>
                     <SearchInput value={searchValue} valueSetter={setSearchValue} placeholder='Busque por nome de categoria' />
                 </Grid>
@@ -68,7 +71,7 @@ export default function CategoriesPage() {
                     <Button onClick={()=>setFilterMenuIsOpen(true)} size='large' sx={{ height: '100%', textTransform: 'none', gap: 1}} variant='outlined' color='primary' fullWidth>Filtrar categorias <FilterAltRounded/></Button>
                 </Grid>
                 <Grid size={{lg: 3, md: 6, sm: 12, xs: 12}}>
-                    <Button size='large' sx={{ height: '100%', textTransform: 'none', gap: 1}} variant='contained' fullWidth>Criar categoria<AddCircleOutlineRounded/></Button>
+                    <Button size='large' onClick={openCreateModal} sx={{ height: '100%', textTransform: 'none', gap: 1}} variant='contained' fullWidth>Criar categoria<AddCircleOutlineRounded/></Button>
                 </Grid>
                 </Grid>
                 <ListingTable
@@ -81,6 +84,7 @@ export default function CategoriesPage() {
             </CardLayout>
             
         </Grid>
+        <CreateCategoryDialog/>
         <CategoriesFiltersSidebar filters={searchFilters} setFiltersProps={setSearchFilters} open={filterMenuIsOpen} toggleDrawer={setFilterMenuIsOpen} />
     </Grid>
   )

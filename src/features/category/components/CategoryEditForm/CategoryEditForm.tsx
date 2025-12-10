@@ -123,7 +123,7 @@ export default function CategoryEditForm({ category } : CategoryEditFormProps) {
                 required>
                     {Object.entries(theme.palette.categoryColors).map(([key, color], index) => 
                         <MenuItem key={key} value={index+1}>
-                            <Typography width={'fit-content'} sx={{backgroundColor: color.light, color: color.main, border: `1px solid ${color.main}`, borderRadius: 1, px: 2}} 
+                            <Typography width={'fit-content'} sx={{backgroundColor: color.light, color: color.dark, border: `1px solid ${color.main}`, borderRadius: 1, px: 2}} 
                             variant='body2'>
                                 Padrão {index+1}
                             </Typography>

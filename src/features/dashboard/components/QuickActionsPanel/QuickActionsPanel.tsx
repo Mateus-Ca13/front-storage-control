@@ -4,14 +4,19 @@ import QuickActionButton from "./QuickActionButton/QuickActionButton";
 import { theme } from "../../../../theme/theme";
 import { AddCircleRounded, DoDisturbOnRounded, CategoryRounded, SwapHorizontalCircleRounded } from "@mui/icons-material";
 import type { QuickActionButtonProps } from "../../types/QuickActionButton";
+import { useNavigate } from "react-router-dom";
+import { useMovementStore } from "../../../movement/stores/useMovementStore";
 
 export default function QuickActionsPanel() {
 
+    const navigate = useNavigate()
+    const {openEntryModal, openExitModal, openTransferModal} = useMovementStore()
+
     const quickActions: QuickActionButtonProps[] = [
-        { title: "Nova Entrada", action: ()=>{}, message: 'Registrar a entrada de produtos', color: theme.palette.success, icon: <AddCircleRounded fontSize="large"/> },
-        { title: "Nova Saída", action: ()=>{}, message: 'Registrar a saída de produtos', color: theme.palette.error, icon: <DoDisturbOnRounded fontSize="large"/> },
-        { title: "Nova Transferência", action: ()=>{}, message: 'Transferir produtos entre estoques', color: theme.palette.warning, icon: <SwapHorizontalCircleRounded fontSize="large"/> },
-        { title: "Ver Produtos", action: ()=>{}, message: 'Ver todos os produtos', color: theme.palette.info, icon: <CategoryRounded fontSize="large"/>}
+        { title: "Nova Entrada", action: ()=>{openEntryModal()}, message: 'Registrar a entrada de produtos', color: theme.palette.success, icon: <AddCircleRounded fontSize="large"/> },
+        { title: "Nova Saída", action: ()=>{openExitModal()}, message: 'Registrar a saída de produtos', color: theme.palette.error, icon: <DoDisturbOnRounded fontSize="large"/> },
+        { title: "Nova Transferência", action: ()=>{openTransferModal()}, message: 'Transferir produtos entre estoques', color: theme.palette.warning, icon: <SwapHorizontalCircleRounded fontSize="large"/> },
+        { title: "Ver Produtos", action: ()=>{navigate('/dashboard/products')}, message: 'Ver todos os produtos', color: theme.palette.info, icon: <CategoryRounded fontSize="large"/>}
     ]
 
     return (
