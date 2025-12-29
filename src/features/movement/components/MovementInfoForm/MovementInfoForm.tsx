@@ -62,12 +62,15 @@ export default function MovementInfoForm({ movementData } : MovementInfoFormProp
                         </FormControl>
                     </BetweenFlexBox>
                 <EditingTextField
-                sx={{ height: '100%'}} 
+                sx={{ height: '100%', '& .MuiInputBase-input': {resize: 'both', overflow: 'hidden', maxHeight: 150} }} 
                 slotProps={{ inputLabel: {shrink: true} }}
                 fullWidth 
+                multiline
+                rows={1}
                 variant='outlined'
                 label="Observações" 
                 disabled
+                
                 value={movementData?.observations}
                 />
             </StartColumnBox>

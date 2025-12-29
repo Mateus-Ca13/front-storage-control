@@ -1,5 +1,4 @@
-import { Box, Chip, MenuItem, Select, type SelectChangeEvent } from '@mui/material'
-import { theme } from '../../../theme/theme'
+import { Box, Chip, MenuItem, Select, useTheme, type SelectChangeEvent } from '@mui/material'
 
 type MultipleSelectProps = {
     options: MultipleSelectOptionProps[]
@@ -15,6 +14,7 @@ type MultipleSelectOptionProps = {
 
 export default function MultipleSelect({ options, selectedValueSetter, selectedValues }: MultipleSelectProps) {
 
+    const theme = useTheme()
     const handleChange = (event: SelectChangeEvent<typeof options[number]['value'][]>) => {
         
         const {target: { value }} = event ;

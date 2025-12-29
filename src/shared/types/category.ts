@@ -3,6 +3,8 @@ export type iCategory = {
     id: number;
     name: string;
     colorPreset: number;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 export interface iCategoryColumnConfig {

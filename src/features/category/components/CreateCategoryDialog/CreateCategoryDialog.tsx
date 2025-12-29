@@ -1,4 +1,4 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormHelperText, Grid, InputAdornment, InputLabel, MenuItem, Typography } from '@mui/material'
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormHelperText, Grid, InputAdornment, InputLabel, MenuItem, Typography, useTheme } from '@mui/material'
 import { EditingTextField } from '../../../../shared/components/TextField/TextField'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {  useForm } from 'react-hook-form'
@@ -9,14 +9,15 @@ import { useToastStore } from '../../../../shared/store/toastStore'
 import { useCategoryStore } from '../../stores/useCategoryStore'
 import { categorySchema, type CategorySchema } from '../../../../schemas/categorySchema'
 import { createCategoryApi } from '../../api/categoryApi'
-import { theme } from '../../../../theme/theme'
+import { queryClient } from '../../../../lib/reactQueryClient'
 
 export default function CreateCategoryDialog() {
 
+  const theme = useTheme()
   const renderToast = useToastStore(state => state.renderToast)
   const isCreateModalOpen = useCategoryStore(state => state.isCreateModalOpen)
   const closeCreateModal = useCategoryStore(state => state.closeCreateModal)
-  const {register, control, handleSubmit, formState: { errors, isSubmitting }, setError} = useForm<CategorySchema>({
+  const {register, control, handleSubmit, formState: { errors, isSubmitting }, setError, reset: resetForm} = useForm<CategorySchema>({
           resolver: zodResolver(categorySchema),
           defaultValues: {
             name: '',
@@ -32,20 +33,27 @@ export default function CreateCategoryDialog() {
           console.log(categoryData)
           const returnedData = await createCategoryApi(categoryData);
           if (returnedData.success){
-              renderToast({message: 'Categoria criada com sucesso!', type: 'success', })
+              renderToast({message: 'Categoria criada com sucesso!', type: 'success' })
               console.log('Categoria criada com sucesso!', returnedData.data)
-              closeCreateModal()
+              handleCloseDialog()
+              queryClient.invalidateQueries({ queryKey: ['categories'] });
           }else{
               renderToast({message: returnedData.message || 'Erro ao criar categoria', type: 'error', })
           }
       }
+
+      const handleCloseDialog = () => {
+        closeCreateModal()
+        resetForm()
+      }
+
 
   return (
     <Dialog
       maxWidth='sm'
       fullWidth
       open={isCreateModalOpen}
-      onClose={closeCreateModal}
+      onClose={handleCloseDialog}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
       >
@@ -104,7 +112,7 @@ export default function CreateCategoryDialog() {
             </Grid>
         </DialogContent>
         <DialogActions sx={{padding: 2}}>
-          <Button onClick={closeCreateModal} sx={{px: 4, py: 1}} variant='outlined'>Cancelar</Button>
+          <Button onClick={handleCloseDialog} sx={{px: 4, py: 1}} variant='outlined'>Cancelar</Button>
           <Button onClick={handleSubmit(handleOnSubmit)} sx={{px: 4, py: 1}} variant='contained'>Criar</Button>
         </DialogActions>
       </Dialog>

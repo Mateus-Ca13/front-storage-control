@@ -1,14 +1,14 @@
-import { Grid, Typography } from "@mui/material";
+import { Grid, Typography, useTheme } from "@mui/material";
 import { CardLayout } from "../../../../shared/components/Cards/Cards";
 import QuickActionButton from "./QuickActionButton/QuickActionButton";
-import { theme } from "../../../../theme/theme";
 import { AddCircleRounded, DoDisturbOnRounded, CategoryRounded, SwapHorizontalCircleRounded } from "@mui/icons-material";
 import type { QuickActionButtonProps } from "../../types/QuickActionButton";
 import { useNavigate } from "react-router-dom";
 import { useMovementStore } from "../../../movement/stores/useMovementStore";
 
 export default function QuickActionsPanel() {
-
+    
+    const theme = useTheme()
     const navigate = useNavigate()
     const {openEntryModal, openExitModal, openTransferModal} = useMovementStore()
 

@@ -12,6 +12,9 @@ import { productsTableColumns } from '../helpers/productsTableColumns'
 import { persistProductSearchFilter } from '../../../shared/utils/persistSearchFilter'
 import CreateProductDialog from '../components/CreateProductDialog/CreateProductDialog'
 import { useProductStore } from '../stores/useProductStore'
+import ImportProductsDialog from '../components/ImportProductsDialog/ImportProductsDialog'
+import { useSettingsStore } from '../../settings/stores/SettingsStore'
+import { useNavigate } from 'react-router-dom'
 
 export type ProductsSearchFiltersProps = {
   stockId?: number;  
@@ -23,10 +26,12 @@ export type ProductsSearchFiltersProps = {
 }
 
 export default function ProductsPage() {
+    const navigate = useNavigate()
+    const defaultPaginationRows = useSettingsStore((state) => state.defaultPaginationRows);
     const openCreateModal = useProductStore((state) => state.openCreateModal)
     const isFirstRender = useRef(true);   
     const [page, setPage] = useState<number>(0);
-    const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+    const [rowsPerPage, setRowsPerPage] = useState<number>(defaultPaginationRows);
     const [searchValue, setSearchValue] = useState<string>('')
     const [filterMenuIsOpen, setFilterMenuIsOpen] = useState(false)
     const [searchFilters, setSearchFilters] = useState<ProductsSearchFiltersProps>(
@@ -92,11 +97,12 @@ export default function ProductsPage() {
                 rowsPerPage={rowsPerPage} setRowsPerPage={setRowsPerPage} 
                 columns={productsTableColumns} items={searchResults} 
                 rowKey={(row: iProductColumnConfig) => row.id} 
-                onRowClick={(some)=> console.log(some)}/>
+                onRowClick={(some)=> navigate(`/dashboard/products/${some.id}`)}/>
             </CardLayout>
             
         </Grid>
         <CreateProductDialog/>
+        <ImportProductsDialog/>
         <ProductFiltersSidebar filters={searchFilters} setFiltersProps={setSearchFilters} open={filterMenuIsOpen} toggleDrawer={setFilterMenuIsOpen} />
     </Grid>
   )

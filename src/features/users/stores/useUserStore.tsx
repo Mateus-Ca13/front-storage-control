@@ -5,9 +5,9 @@ type useUserStoreProps = {
   openChangePasswordDialog: () => void
   closeChangePasswordDialog: () => void
   isCreateModalOpen: boolean
-setIsCreateModalOpen: (value: boolean) => void
-openCreateModal: () => void
-closeCreateModal: () => void
+  setIsCreateModalOpen: (value: boolean) => void
+  openCreateModal: () => void
+  closeCreateModal: () => void
 }
 
 export const useUserStore = create<useUserStoreProps>((set) => ({

@@ -1,7 +1,6 @@
-import { Button, Grid, Typography } from '@mui/material'
+import { Button, Grid, Typography, useTheme } from '@mui/material'
 import { CardLayout } from '../../../../shared/components/Cards/Cards'
 import { CenterColumnBox, StartColumnBox } from '../../../../shared/components/Boxes/Boxes'
-import { theme } from '../../../../theme/theme'
 import BelowStockSummaryCard from './BelowStockSummaryCard/BelowStockSummaryCard'
 import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
@@ -10,10 +9,11 @@ import type { iProductColumnConfig } from '../../../../shared/types/product'
 import { persistProductSearchFilter } from '../../../../shared/utils/persistSearchFilter'
 
 export default function BelowStockSummaryPanel() {
-
+  
+    const theme = useTheme()
     const navigate = useNavigate()
     const [belowStockProducts,setBelowStockProducts] = useState<iProductColumnConfig[]>([])
-    const { data, isLoading, error } = useProductsQuery(0, 5, '', {isBelowMinStock: true, categoriesIds: [], hasNoCodebar: false})
+    const { data, isLoading, error } = useProductsQuery(0, 3, '', {isBelowMinStock: true, categoriesIds: [], hasNoCodebar: false})
     
     useEffect(() => {
       const products = data?.data?.products ?? [];
@@ -38,7 +38,7 @@ export default function BelowStockSummaryPanel() {
           <CenterColumnBox sx={{ gap: 2, mt: 3}}>
           {belowStockProducts.map((product) => <BelowStockSummaryCard onClick={()=>navigate(`products/${product.id}`)} key={product.id} product={product}/>)}
           <Button onClick={()=>navigateToProducts()} fullWidth variant="outlined"sx={{p: 2}}>
-            <Typography fontWeight={600} sx={{textTransform: 'none'}} variant="body1">Ver todos os produtos</Typography>
+            <Typography fontWeight={600} sx={{textTransform: 'none'}} variant="body1">Ver todos os produtos em alerta</Typography>
           </Button>
           </CenterColumnBox>
       </CardLayout>

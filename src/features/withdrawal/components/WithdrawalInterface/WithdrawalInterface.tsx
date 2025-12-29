@@ -1,16 +1,15 @@
 import { useForm, type Control, type FieldErrors, type UseFormGetValues, type UseFormSetValue, type UseFormTrigger } from "react-hook-form";
 import { addProductToMovementSchema, type AddProductToMovementSchema, type MovementSchema } from "../../../../schemas/MovementSchema";
-import { Button, Divider, Typography } from "@mui/material";
+import { Button, Divider, Typography, useTheme } from "@mui/material";
 import { EditingTextField } from "../../../../shared/components/TextField/TextField";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type BaseSyntheticEvent } from "react";
 import { useToastStore } from "../../../../shared/store/toastStore";
 import type { iProduct } from "../../../../shared/types/product";
 import { useKeyboardShortcuts } from "../../../../shared/hooks/useKeyboardShortcuts";
-import { SearchRounded, Start } from "@mui/icons-material";
+import { SearchRounded } from "@mui/icons-material";
 import { BetweenFlexBox, CenterColumnBox, CenterFlexBox, StartColumnBox } from "../../../../shared/components/Boxes/Boxes";
 import { TwoColorsChip } from "../../../../shared/components/Chips/Chips";
-import { theme } from "../../../../theme/theme";
 import { formatMovementType } from "../../../../shared/utils/formatters";
 import WithdrawalProductsList from "../WithdrawalProductsList/WithdrawalProductsList";
 import type { iStockColumnConfig } from "../../../../shared/types/stock";
@@ -38,12 +37,13 @@ type WithdrawalInterfaceProps = {
       formControl: Control<MovementSchema>
       formErrors: FieldErrors<MovementSchema>
       formTrigger: UseFormTrigger<MovementSchema>
+      onSubmitMovement: (e?: BaseSyntheticEvent<object, any, any> | undefined) => Promise<void>
 }
 
 
-export default function WithdrawalInterface({formStepSetter, formValueGetter, formValueSetter, formTrigger, formControl, formErrors }: WithdrawalInterfaceProps) {
+export default function WithdrawalInterface({formStepSetter, formValueGetter, formValueSetter, formTrigger, formControl, formErrors, onSubmitMovement }: WithdrawalInterfaceProps) {
 
-  
+  const theme = useTheme()
   const renderToast = useToastStore(state => state.renderToast)
   const renderConfirmActionDialog = useConfirmActionDialogStore(state => state.renderConfirmActionDialog)
   const closeConfirmActionDialog = useConfirmActionDialogStore(state => state.handleClose)
@@ -90,6 +90,9 @@ export default function WithdrawalInterface({formStepSetter, formValueGetter, fo
       'F2': () => {
         openObservationModal()
       },
+      'F3': () => {
+        handleMovementSubmit()
+      },
       'Escape': () => {
       },
       'F10': () => {
@@ -101,9 +104,10 @@ export default function WithdrawalInterface({formStepSetter, formValueGetter, fo
       'F4': () => {
         renderConfirmActionDialog({
           title: 'Alterar estoques?',
-          message: 'Você tem certeza que deseja alterar os estoques de origem e/ou destino? A movimentação atual será perdida.',
+          message: 'Você tem certeza que deseja alterar os estoques de origem e/ou destino? Todos os produtos adicionados serão removidos.',
           confirmAction: {label: 'Alterar estoques [ENTER]', onClick: () => {
             formStepSetter('usedStocks')
+            formValueSetter('products', [])
             closeConfirmActionDialog()
           }},
           cancelAction: {label: 'Voltar [ESC]', onClick: () => {
@@ -219,8 +223,8 @@ export default function WithdrawalInterface({formStepSetter, formValueGetter, fo
   const cancelMovement = () => {
     renderConfirmActionDialog({
       title: 'Cancelar movimentação?',
-      message: 'Você tem certeza que deseja cancelar esta movimentação? Todos os produtos adicionados serão removidos.',
-      confirmAction: {label: 'Cancelar movimentação [ENTER]', onClick: () => {
+      message: 'Você tem certeza que deseja cancelar esta movimentação? A movimentação atual será perdida.',
+      confirmAction: {label: 'Confirmar [ENTER]', onClick: () => {
           formStepSetter('operationType')
           setProductsAddedToMovement([])
           productResetForm()
@@ -233,7 +237,21 @@ export default function WithdrawalInterface({formStepSetter, formValueGetter, fo
     })
   }
 
-   
+  const handleMovementSubmit = () => {
+    renderConfirmActionDialog({
+      title: 'Concluir movimentação?',
+      message: 'Você tem certeza que deseja concluir esta movimentação?',
+      confirmAction: {label: 'Concluir [ENTER]', onClick: async () => {
+          closeConfirmActionDialog()
+          if(onSubmitMovement){
+            await onSubmitMovement();
+          }
+      }},
+      cancelAction: {label: 'Voltar [ESC]', onClick: () => {
+          closeConfirmActionDialog()
+      }}
+    })
+  }   
 
   useEffect(() => {
     formValueSetter('products', productsAddedToMovement.map(p => ({ productId: p.product.id, quantity: p.quantity, pricePerUnit: p.pricePerUnit})))
@@ -343,7 +361,7 @@ export default function WithdrawalInterface({formStepSetter, formValueGetter, fo
                   <Button fullWidth variant='outlined' onClick={() => cancelMovement()} sx={{ fontSize: 22, textTransform: 'none', py: 2, px: 8}}>
                     <Typography  variant='h6'>Cancelar <strong>[F10]</strong></Typography>
                   </Button>
-                  <Button fullWidth variant='contained' onClick={() => formStepSetter('usedStocks')} sx={{ fontSize: 22, textTransform: 'none', py: 2, px: 8}}>
+                  <Button fullWidth variant='contained' onClick={handleMovementSubmit} sx={{ fontSize: 22, textTransform: 'none', py: 2, px: 8}}>
                     <Typography variant='h6'>Concluir {formatMovementType(formValueGetter('type'))}<strong> [F3]</strong></Typography>
                   </Button>
                 </CenterColumnBox>

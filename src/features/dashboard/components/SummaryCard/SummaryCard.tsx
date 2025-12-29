@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { Typography } from '@mui/material';
+import { Typography, useTheme } from '@mui/material';
 import { InfoOutlineRounded, MovingRounded, TrendingDownRounded, WarningRounded } from '@mui/icons-material';
-import { theme } from '../../../../theme/theme';
 import { BetweenFlexBox, CenterFlexBox, StartColumnBox } from '../../../../shared/components/Boxes/Boxes';
 
 type SummaryCardProps = {
@@ -14,7 +13,8 @@ type SummaryCardProps = {
 }
 
 export default function SummaryCard({title, value, icon, message, warning, type }: SummaryCardProps) {
-
+    
+    const theme = useTheme()
     const [messageType, setMessageType] = useState<{color: string, icon: React.ReactNode} | undefined>()
 
     useEffect(() => {

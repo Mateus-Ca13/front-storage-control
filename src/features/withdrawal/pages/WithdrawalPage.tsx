@@ -1,5 +1,5 @@
 import { Button, Grid } from '@mui/material'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { CardLayout } from '../../../shared/components/Cards/Cards'
 import { CenterColumnBox, CenterFlexBox } from '../../../shared/components/Boxes/Boxes'
 import SelectModeSection from '../components/SelectModeSection/SelectModeSection'
@@ -9,9 +9,12 @@ import { useForm } from 'react-hook-form'
 import SelectStocksSection from '../components/SelectStocksSection/SelectStocksSection'
 import { WithdrawalStepper } from '../components/WithdrawalStepper/WithdrawalStepper'
 import WithdrawalInterface from '../components/WithdrawalInterface/WithdrawalInterface'
+import { createMovementApi } from '../../movement/api/movementsApi'
+import { useToastStore } from '../../../shared/store/toastStore'
 
 export default function WithdrawalPage() {
 
+  const renderToast = useToastStore(state => state.renderToast)
   const {register: registerMovement, 
       control: controlMovement,
       reset: movementResetForm,
@@ -27,10 +30,23 @@ export default function WithdrawalPage() {
       defaultValues: {
       observations: '',
       products: [],
-      userCreatorId:  1
       }
     })
   const [movementStep, setMovementStep] = useState<"operationType" | "usedStocks" | "withdrawal">("operationType")
+
+   const handleMovementSubmit = async (movementData: MovementSchema) => {
+          console.log(movementData)
+          const returnedData = await createMovementApi(movementData);
+          debugger
+          if (returnedData.success){
+              renderToast({message: 'Transferência registrada com sucesso!', type: 'success', })
+              console.log('Transferência registrada com sucesso!', returnedData.data)
+              setMovementStep('operationType')
+              movementResetForm()
+          }else{
+              renderToast({message: returnedData.message || 'Erro ao registrar transferência', type: 'error', })
+          }
+      }
     
 
   function renderMovementStep() {
@@ -60,12 +76,21 @@ export default function WithdrawalPage() {
         formStepSetter={setMovementStep}
         formControl={controlMovement}
         formErrors={errorsMovement}
+        onSubmitMovement={handleSubmitMovement(handleMovementSubmit)}
       />
 
       default:
         return <p>404</p>
     }
     }
+
+  useEffect(() => {
+    Object.entries(errorsMovement).forEach(([key, value]) => {
+    renderToast({message: value.message as string, type: 'error', })
+  });
+    
+  }, [errorsMovement])
+
 
   return (
     <Grid size={{lg: 12, md: 12, sm: 12, xs: 12, xl: 12}}>
@@ -79,9 +104,7 @@ export default function WithdrawalPage() {
                 {renderMovementStep()}
               </CenterColumnBox>
             </WithdrawalStepper>
-            
-            <Button onClick={()=>console.log(getValuesMovement())}>Log de movimentação</Button>
-            
+                        
         </CardLayout>
       </CenterFlexBox>
     </Grid>

@@ -1,11 +1,10 @@
-import { Autocomplete, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, InputAdornment, Typography } from '@mui/material'
+import { Autocomplete, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, InputAdornment, Typography, useTheme } from '@mui/material'
 import { EditingTextField } from '../../../../shared/components/TextField/TextField'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {  Controller, useForm } from 'react-hook-form'
-import { AddCircleOutlineRounded, RemoveCircleOutlineRounded, SwapHorizontalCircleOutlined } from '@mui/icons-material'
+import { AddCircleOutlineRounded, SwapHorizontalCircleOutlined } from '@mui/icons-material'
 import { BetweenFlexBox, CenterColumnBox, StartColumnBox, StartFlexBox } from '../../../../shared/components/Boxes/Boxes'
 import { useToastStore } from '../../../../shared/store/toastStore'
-import { theme } from '../../../../theme/theme'
 import { useMovementStore } from '../../stores/useMovementStore'
 import { addProductToMovementSchema, type AddProductToMovementSchema, movementSchema, type MovementSchema } from '../../../../schemas/MovementSchema'
 import { createMovementApi } from '../../api/movementsApi'
@@ -15,19 +14,30 @@ import type { iStockColumnConfig } from '../../../../shared/types/stock'
 import { useProductsQuery } from '../../../products/hooks/useProductsQuery'
 import type { iProductColumnConfig, ProductMeasurementType } from '../../../../shared/types/product'
 import DialogProductsList from '../DialogProductsList/DialogProductsList'
-import { useAuthStore } from '../../../auth/stores/useAuthStore'
-import { formatCurrency, formatMeasurementUnit } from '../../../../shared/utils/formatters'
+import { formatCurrency, formatMeasurementUnit, formatStockStatus } from '../../../../shared/utils/formatters'
+import { TwoColorsChip } from '../../../../shared/components/Chips/Chips'
+import { useConfirmActionDialogStore } from '../../../../shared/store/confirmActionDialogStore'
 
 
 export default function CreateTransferDialog() {
-
-    const userCreator = useAuthStore(state => state.user)
+  
+    const theme = useTheme()
     const renderToast = useToastStore(state => state.renderToast)
     const isCreateModalOpen = useMovementStore(state => state.isTransferModalOpen)
     const closeCreateModal = useMovementStore(state => state.closeTransferModal)
+    const renderConfirmActionDialog = useConfirmActionDialogStore(state => state.renderConfirmActionDialog)
+    const closeConfirmActionDialog = useConfirmActionDialogStore(state => state.handleClose)
     const [productSearch, setProductSearch] = useState('')
     const [searchedProducts, setSearchedProducts] = useState<iProductColumnConfig[]>([])
     const [productsAddedToMovement, setProductsAddedToMovement] = useState<AddProductToMovementSchema[]>([])
+
+    const handleCloseDialog = () => {
+      closeCreateModal()
+      setProductsAddedToMovement([])
+      movementResetForm({}, { keepValues: true });
+      productResetForm({}, { keepValues: true });
+    }
+
 
     const {register: registerMovement, 
       control: controlMovement,
@@ -43,7 +53,6 @@ export default function CreateTransferDialog() {
       type: 'TRANSFER',
       observations: '',
       products: [],
-      userCreatorId:  1
       }
     })
 
@@ -115,15 +124,30 @@ export default function CreateTransferDialog() {
 
   
     const handleMovementSubmit = async (movementData: MovementSchema) => {
-        console.log(movementData)
-        const returnedData = await createMovementApi(movementData);
-        if (returnedData.success){
-            renderToast({message: 'Transferência registrada com sucesso!', type: 'success', })
-            console.log('Transferência registrada com sucesso!', returnedData.data)
-            closeCreateModal()
-        }else{
-            renderToast({message: returnedData.message || 'Erro ao registrar transferência', type: 'error', })
+        
+      renderConfirmActionDialog({
+        title: "Confirmar transferência de produtos?",
+        message: "Você está prestes a registrar uma transferência de produtos. Deseja continuar?",
+        confirmAction: {
+            label: "Registrar",
+            onClick: async () => {
+            const returnedData = await createMovementApi(movementData);
+            if (returnedData.success){
+              renderToast({message: 'Transferência registrada com sucesso!', type: 'success', })
+              console.log('Transferência registrada com sucesso!', returnedData.data)
+              handleCloseDialog()
+            }else{
+              renderToast({message: returnedData.message || 'Erro ao registrar transferência', type: 'error', })
+            }
+          closeConfirmActionDialog()
+        }},
+        cancelAction: {
+          label: "Cancelar",
+          onClick: () => {
+            closeConfirmActionDialog()
+          }
         }
+        })
     }
 
     const handleAddProductToMovementSubmit = async (movementData: AddProductToMovementSchema) => {
@@ -157,7 +181,7 @@ export default function CreateTransferDialog() {
       maxWidth='lg'
       fullWidth
       open={isCreateModalOpen}
-      onClose={closeCreateModal}
+      onClose={handleCloseDialog}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
       >
@@ -184,7 +208,20 @@ export default function CreateTransferDialog() {
                   noOptionsText="Nenhum estoque encontrado."
                   
                     fullWidth
-                    options={stocks.map((s)=>({label: s.name, value: s.id}))}
+                    options={stocks.map((s)=>({label: s.name, value: s.id, status: s.status}))}
+                    renderOption={(props, option) => (
+                      <li {...props}>
+                        <StartFlexBox gap={1} alignItems="center">
+                          <Typography>{option.label}</Typography>
+                          <TwoColorsChip 
+                          sx={{ml: 2}}
+                          size='small'
+                          label={formatStockStatus(option.status)}
+                          colorPreset={option.status === 'ACTIVE' ? 'success' : option.status === 'INACTIVE' ? 'error' : 'warning'}
+                          />
+                        </StartFlexBox>
+                      </li>
+                    )}
                     getOptionLabel={(option) => option.label}
                     isOptionEqualToValue={(opt, val) => opt.value === val.value}
                     onChange={(_, value) => {field.onChange(value?.value); handleStockChange() }} // valor real
@@ -212,7 +249,20 @@ export default function CreateTransferDialog() {
                   noOptionsText="Nenhum estoque encontrado."
                   
                     fullWidth
-                    options={stocks.map((s)=>({label: s.name, value: s.id}))}
+                    options={stocks.map((s)=>({label: s.name, value: s.id, status: s.status}))}
+                    renderOption={(props, option) => (
+                      <li {...props}>
+                        <StartFlexBox gap={1} alignItems="center">
+                          <Typography>{option.label}</Typography>
+                          <TwoColorsChip 
+                          sx={{ml: 2}}
+                          size='small'
+                          label={formatStockStatus(option.status)}
+                          colorPreset={option.status === 'ACTIVE' ? 'success' : option.status === 'INACTIVE' ? 'error' : 'warning'}
+                          />
+                        </StartFlexBox>
+                      </li>
+                    )}
                     getOptionLabel={(option) => option.label}
                     isOptionEqualToValue={(opt, val) => opt.value === val.value}
                     onChange={(_, value) => {field.onChange(value?.value) }} // valor real
@@ -264,9 +314,11 @@ export default function CreateTransferDialog() {
                           getOptionLabel={(option) => option?.name ? `${option?.name} — ${option.stockedQuantities} ${formatMeasurementUnit(option.measurement as ProductMeasurementType, 'plural')} restantes`: ""}
                           renderOption={(props, option) => (
                             <li {...props} style={{gap: 2}}>
-                            <Typography color='textPrimary' >{option.name}</Typography>
-                            <Typography color='textSecondary'>—</Typography>
-                            <Typography color='secondary'>{option.stockedQuantities} {formatMeasurementUnit(option.measurement as ProductMeasurementType, 'plural')} restantes</Typography>
+                            <StartFlexBox gap={2} alignItems="center">
+                              <Typography color='textPrimary' >{option.name}</Typography>
+                              <Typography color='textSecondary'>—</Typography>
+                              <Typography variant='body2' color='secondary'>{option.stockedQuantities} {formatMeasurementUnit(option.measurement as ProductMeasurementType, 'plural')} restantes</Typography>
+                            </StartFlexBox>
                             </li>
                         )}
                           isOptionEqualToValue={(opt, val) => opt.id === val.id}
@@ -370,7 +422,7 @@ export default function CreateTransferDialog() {
           )}
         </DialogContent>
         <DialogActions sx={{padding: 2}}>
-          <Button onClick={closeCreateModal} sx={{px: 4, py: 1}} variant='outlined'>Cancelar</Button>
+          <Button onClick={handleCloseDialog} sx={{px: 4, py: 1}} variant='outlined'>Cancelar</Button>
           <Button onClick={handleSubmitMovement(handleMovementSubmit)} sx={{px: 4, py: 1}} variant='contained'>Registrar transferência</Button>
         </DialogActions>
       </Dialog>

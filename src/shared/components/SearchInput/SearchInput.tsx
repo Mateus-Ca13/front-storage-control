@@ -1,6 +1,5 @@
 import { SearchRounded } from "@mui/icons-material";
-import { InputAdornment, TextField } from "@mui/material";
-import { theme } from "../../../theme/theme";
+import { InputAdornment, TextField, useTheme } from "@mui/material";
 
 type SearchInputProps = {
     placeholder: string;
@@ -11,6 +10,8 @@ type SearchInputProps = {
 
 
 export default function SearchInput({value, valueSetter, placeholder, onChange} : SearchInputProps) {
+
+  const theme = useTheme()
   return (
     <TextField 
     sx={{

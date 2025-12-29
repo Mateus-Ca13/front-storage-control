@@ -2,8 +2,8 @@ import { Button, Grid, Typography } from '@mui/material'
 import { useEffect, useRef, useState } from 'react'
 import { CardLayout } from '../../../shared/components/Cards/Cards'
 import SearchInput from '../../../shared/components/SearchInput/SearchInput'
-import { StartColumnBox } from '../../../shared/components/Boxes/Boxes'
-import { AddCircleOutlineRounded, FilterAltRounded } from '@mui/icons-material'
+import { StartColumnBox, StartFlexBox } from '../../../shared/components/Boxes/Boxes'
+import { AddCircleOutlineRounded, FilterAltRounded, PeopleRounded, Person2Rounded } from '@mui/icons-material'
 import ListingTable from '../../../shared/components/ListingTable/ListingTable'
 import { useUsersQuery } from '../hooks/useUsersQuery'
 import type { iUserColumnConfig } from '../../../shared/types/user'
@@ -12,6 +12,8 @@ import UsersFiltersSidebar from '../components/UsersFiltersSidebar/UsersFiltersS
 import { persistUserSearchFilter } from '../../../shared/utils/persistSearchFilter'
 import CreateUserDialog from '../components/CreateUserDialog/CreateUserDialog'
 import { useUserStore } from '../stores/useUserStore'
+import { useSettingsStore } from '../../settings/stores/SettingsStore'
+import { useNavigate } from 'react-router-dom'
 
 
 export type UsersSearchFiltersProps = {
@@ -20,10 +22,12 @@ export type UsersSearchFiltersProps = {
 }
 
 export default function UsersPage() {
+    const navigate = useNavigate()
+    const defaultPaginationRows = useSettingsStore((state) => state.defaultPaginationRows);
     const openCreateModal = useUserStore((state) => state.openCreateModal)
     const isFirstRender = useRef(true);
     const [page, setPage] = useState<number>(0);
-    const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+    const [rowsPerPage, setRowsPerPage] = useState<number>(defaultPaginationRows);
     const [searchValue, setSearchValue] = useState<string>('')
     const [filterMenuIsOpen, setFilterMenuIsOpen] = useState(false)
     const [searchFilters, setSearchFilters] = useState<UsersSearchFiltersProps>(
@@ -56,9 +60,14 @@ export default function UsersPage() {
     <Grid container spacing={2}>
         <Grid size={{lg: 12, md: 12, sm: 12, xs: 12}}>
             <CardLayout sx={{padding: 2}}>
-                <StartColumnBox mb={4}>
-                <Typography color='primary' fontWeight={700} variant='h5'>Lista de Usuários</Typography>
+                <StartFlexBox mb={4} gap={1}>
+                    <PeopleRounded color='primary' sx={{fontSize: 48, backgroundColor: 'secondary.light', borderRadius: 1, p: 1}}/>
+                <StartColumnBox>
+                    <Typography color='primary' fontWeight={700} variant='h5'>Lista de Usuários</Typography>
                 <Typography variant='body2'>Visualize a lista de usuários cadastrados</Typography>
+                </StartColumnBox>
+                </StartFlexBox>
+                <StartColumnBox>
                 </StartColumnBox>
                 <Grid container spacing={2} mb={2}>
                 <Grid size={{lg: 6, md: 12, sm: 12, xs: 12}}>
@@ -77,7 +86,7 @@ export default function UsersPage() {
                 rowsPerPage={rowsPerPage} setRowsPerPage={setRowsPerPage} 
                 columns={usersTableColumns} items={searchResults} 
                 rowKey={(row: iUserColumnConfig) => row.id} 
-                onRowClick={(some)=> console.log(some)}/>
+                onRowClick={(some)=> navigate(`/dashboard/users/${some.id}`)}/>
             </CardLayout>
             
         </Grid>

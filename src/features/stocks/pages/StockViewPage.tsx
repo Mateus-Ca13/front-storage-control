@@ -7,22 +7,25 @@ import { useProductsQuery } from "../../products/hooks/useProductsQuery"
 import { Button, Divider, Grid, Typography } from "@mui/material"
 import { CardLayout } from "../../../shared/components/Cards/Cards"
 import StockEditForm from "../components/StockEditForm/StockEditForm"
-import { BetweenFlexBox, CenterColumnBox, CenterFlexBox, EndFlexBox, StartColumnBox, StartFlexBox } from "../../../shared/components/Boxes/Boxes"
+import { BetweenFlexBox, CenterColumnBox, EndFlexBox} from "../../../shared/components/Boxes/Boxes"
 import ListingTable from "../../../shared/components/ListingTable/ListingTable"
 import { productsTableColumns } from "../../products/helpers/productsTableColumns"
 import { persistProductSearchFilter } from "../../../shared/utils/persistSearchFilter"
 import { FilterAltRounded } from "@mui/icons-material"
-import { LightTooltip } from "../../../shared/components/Tooltip/Tooltip"
+import NotFoundedWarning from "../../../shared/components/NotFoundedWarning/NotFoundedWarning"
+import LoadingOverlay from "../../../shared/components/LoadingOverlay/LoadingOverlay"
+import { useSettingsStore } from "../../settings/stores/SettingsStore"
 
 
 export default function StockViewPage() {
+    const defaultPaginationRows = useSettingsStore((state) => state.defaultPaginationRows);
     const navigate = useNavigate()
     const { id } = useParams()
     const [page, setPage] = useState<number>(0);
-    const [rowsPerPage, setRowsPerPage] = useState<number>(5);
+    const [rowsPerPage, setRowsPerPage] = useState<number>(defaultPaginationRows / 2);
     const [products, setProducts] = useState<iProductColumnConfig[]>([])
     const [stock, setStock] = useState<iStock | null>(null)
-    const { data: stockData } = useStockByIdQuery(Number(id))
+    const { data: stockData, isLoading: stockIsLoading} = useStockByIdQuery(Number(id))
     const { data: productsData,  } = useProductsQuery(page, rowsPerPage, '', {categoriesIds: [], stockId: stock?.id, hasNoCodebar: false, isBelowMinStock: false} )
 
 
@@ -47,6 +50,9 @@ export default function StockViewPage() {
     }
 
   return (
+    stockData?.success || stockIsLoading?
+    stockIsLoading?
+    <LoadingOverlay/>:
     <Grid container size={{xl: 12, lg: 12, md: 12, sm: 12, xs: 12}} spacing={2}>
         <CardLayout sx={{padding: 2, width: '100%'}}>
                 <StockEditForm stock={stock}/>
@@ -66,7 +72,7 @@ export default function StockViewPage() {
                     rowsPerPage={rowsPerPage} setRowsPerPage={setRowsPerPage} 
                     columns={productsTableColumns} items={products} 
                     rowKey={(row: iProductColumnConfig) => row.id} 
-                    onRowClick={(some)=> console.log(some)}
+                    onRowClick={(some)=>navigate(`/dashboard/products/${some.id}`)}
                     height={385}/>
                 </Grid>
                 <EndFlexBox width={'100%'} mt={2} border={1} borderColor={'grey.400'} gap={2} display={'inline-block'} px={2} py={1} borderRadius={1} bgcolor={'background.default'} color={'common.black'}>
@@ -77,6 +83,7 @@ export default function StockViewPage() {
             </CardLayout>
             
         </Grid>
-    </Grid>
+    </Grid>:
+    <NotFoundedWarning/>
   )
 }

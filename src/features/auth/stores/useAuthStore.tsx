@@ -1,22 +1,31 @@
-import { create } from "zustand"
+import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
+import type { UserAuth } from '../../../shared/types/user';
 
-type useAuthStoreProps = {
-    user: {
-        id: number,
-        name: string,
-        username: string,
-        email: string,
-    } | null,
-    setUser: (
-        id: number,
-        name: string,
-        username: string,
-        email: string,
-    ) => void,
 
+interface useAuthStoreProps {
+    user: UserAuth | null;
+    setUserInfo: (data: UserAuth) => void;
+    logout: () => void;
 }
 
-export const useAuthStore = create<useAuthStoreProps>((set) => ({
-    user: null,
-    setUser: (id, name, username, email) => set({user: {id, name, username, email}}),
-}))
+export const useAuthStore = create<useAuthStoreProps>()(
+    persist(
+        (set) => ({
+            user: null,
+
+            setUserInfo: (data) => {
+                if(!data.role || !data.username || !data.email) return;
+                set({ user: data }); 
+            },
+
+            logout: () => {
+                set({ user: null }); 
+            }
+        }),
+        {
+            name: 'auth-storage', 
+            storage: createJSONStorage(() => localStorage), 
+        }
+    )
+);

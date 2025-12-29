@@ -33,7 +33,7 @@ export const updateCategoryApi = async (id: number, data: CategorySchema): Promi
         return response as iResponse<iCategory>
         
     } catch (error: AxiosError | any) {
-        return {...error.response.data, data: {}} as iResponse<iCategoryColumnConfig>
+        return {...error.response.data, data: {}} as iResponse<iCategory>
     }
 }
 
@@ -47,12 +47,12 @@ export const createCategoryApi = async (data: CategorySchema): Promise<iResponse
     }
 }
 
-export const deleteCategoryApi = async (id: number): Promise<iResponse<iCategory>> => {   
+export const deleteCategoryApi = async (id: number): Promise<iResponse<{deletedCategory: iCategory, updatedProductsCount: number}>> => {   
     try {
         const response  = await api.delete(`categories/${id}`).then(res => res.data)
-        return response as iResponse<iCategory>
+        return response as iResponse<{deletedCategory: iCategory, updatedProductsCount: number}>
         
     } catch (error: AxiosError | any) {
-        return {...error.response.data, data: {}} as iResponse<iCategory>
+        return {...error.response.data, data: {}} as iResponse<{deletedCategory: iCategory, updatedProductsCount: number}>
     }
 }

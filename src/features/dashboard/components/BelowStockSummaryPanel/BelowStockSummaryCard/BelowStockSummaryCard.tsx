@@ -1,7 +1,5 @@
-import { Box, Button, Divider, Typography } from '@mui/material';
+import { Box, Button, Divider, Typography, useTheme } from '@mui/material';
 import { BetweenFlexBox, CenterFlexBox, StartColumnBox, StartFlexBox } from '../../../../../shared/components/Boxes/Boxes';
-import type { BelowStockSummaryProps } from '../../../types/belowStockSsummary';
-import { theme } from '../../../../../theme/theme';
 import { Visibility } from '@mui/icons-material';
 import { CategoryChip } from '../../../../../shared/components/Chips/Chips';
 import type { iProductColumnConfig } from '../../../../../shared/types/product';
@@ -14,6 +12,7 @@ type BelowStockSummaryCardProps = {
 
 export default function BelowStockSummaryCard({ product, onClick}: BelowStockSummaryCardProps) {
   
+  const theme = useTheme()
   return (
     <Button onClick={onClick} sx={{ textTransform: 'none'}} variant="outlined" fullWidth>   
       <BetweenFlexBox>

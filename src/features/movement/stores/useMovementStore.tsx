@@ -20,6 +20,10 @@ type useMovementStoreProps = {
     isObservationModalOpen: boolean
     openObservationModal: () => void
     closeObservationModal: () => void
+
+    isMovementModalOpen: boolean
+    openMovementModal: () => void
+    closeMovementModal: () => void
 }
 
 export const useMovementStore  = create<useMovementStoreProps>((set) => ({
@@ -43,6 +47,11 @@ export const useMovementStore  = create<useMovementStoreProps>((set) => ({
     isObservationModalOpen: false,
     openObservationModal: () => set({isObservationModalOpen: true}),
     closeObservationModal: () => set({isObservationModalOpen: false}),
+
+    isMovementModalOpen: false,
+    openMovementModal: () => set({isMovementModalOpen: true}),
+    closeMovementModal: () => set({isMovementModalOpen: false}),
+    
 }))
 
 

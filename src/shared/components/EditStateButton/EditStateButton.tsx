@@ -1,5 +1,4 @@
 import { Button, Grid } from '@mui/material'
-import { CenterFlexBox } from '../Boxes/Boxes'
 import { ClearRounded, CreateRounded, DoneRounded } from '@mui/icons-material'
 
 type EditStateButtonProps = {
@@ -14,7 +13,11 @@ export default function EditStateButton({state, setState, labelEntity, confirmAc
 
     const renderEditStateButton = (state: boolean) => {
         if (!state) {
-            return <Button size='large' variant='contained' fullWidth sx={{ padding: 1.5, gap: 1, textTransform: 'none', textWrap: 'nowrap'}} onClick={()=> setState(true)}>Editar {labelEntity} <CreateRounded fontSize='small'/></Button>
+            return (
+                <Grid size={{xl: 6, lg: 6, md: 6, sm: 12, xs: 12}}>
+                    <Button size='large' variant='contained' fullWidth sx={{ padding: 1.5, gap: 1, textTransform: 'none', textWrap: 'nowrap'}} onClick={()=> setState(true)}>Editar {labelEntity} <CreateRounded fontSize='small'/></Button>
+                </Grid>
+            )
         } else {
             return (<>
                 <Grid size={{xl: 6, lg: 6, md: 6, sm: 12, xs: 12}}>

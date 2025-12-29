@@ -9,17 +9,18 @@ import {  CenterFlexBox, StartColumnBox, StartFlexBox } from '../../../../shared
 import { useToastStore } from '../../../../shared/store/toastStore'
 import { useUserStore } from '../../stores/useUserStore'
 import { createUserDTO, type CreateUserDTO } from '../../../../schemas/userSchema'
-import { UserRoleTuple } from '../../../auth/types/user'
 import { createUserApi } from '../../api/usersApi'
 import { useState } from 'react'
 import { LightTooltip } from '../../../../shared/components/Tooltip/Tooltip'
+import { UserRoleTuple } from '../../../../shared/types/user'
+import { queryClient } from '../../../../lib/reactQueryClient'
 
 export default function CreateUserDialog() {
 
   const renderToast = useToastStore(state => state.renderToast)
   const isCreateModalOpen = useUserStore(state => state.isCreateModalOpen)
   const closeCreateModal = useUserStore(state => state.closeCreateModal)
-  const {register, control, handleSubmit, formState: { errors, isSubmitting }, setError} = useForm<CreateUserDTO>({
+  const {register, control, handleSubmit, formState: { errors, isSubmitting }, setError, reset: resetForm, resetField} = useForm<CreateUserDTO>({
           resolver: zodResolver(createUserDTO),
           defaultValues: {
 
@@ -35,18 +36,34 @@ export default function CreateUserDialog() {
           if (returnedData.success){
               renderToast({message: 'Usuário criado com sucesso!', type: 'success', })
               console.log('Usuário criado com sucesso!', returnedData.data)
-              closeCreateModal()
+              handleCloseDialog()
+              queryClient.invalidateQueries({ queryKey: ['users'] });
           }else{
               renderToast({message: returnedData.message || 'Erro ao criar usuário', type: 'error', })
           }
       }
 
+  const handleCloseDialog = () => {
+    closeCreateModal()
+    resetForm({
+        name: '',
+        email: '',
+        username: '',
+        role: 'USER',
+        password: '',
+        confirmPassword: ''
+    });
+    setNewPasswordVisible(false);
+    setCurrentPasswordVisible(false);
+  }
+
+
   return (
-    <Dialog
+    isCreateModalOpen && <Dialog
       maxWidth='sm'
       fullWidth
       open={isCreateModalOpen}
-      onClose={closeCreateModal}
+      onClose={handleCloseDialog}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
       >
@@ -170,7 +187,7 @@ export default function CreateUserDialog() {
           </Grid>
         </DialogContent>
         <DialogActions sx={{padding: 2}}>
-          <Button onClick={closeCreateModal} sx={{px: 4, py: 1}} variant='outlined'>Cancelar</Button>
+          <Button onClick={handleCloseDialog} sx={{px: 4, py: 1}} variant='outlined'>Cancelar</Button>
           <Button onClick={handleSubmit(handleOnSubmit)} sx={{px: 4, py: 1}} variant='contained'>Criar</Button>
         </DialogActions>
       </Dialog>

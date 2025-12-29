@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useProductStore } from '../../stores/useProductStore'
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormHelperText, Grid, InputAdornment, InputLabel, MenuItem, Typography } from '@mui/material'
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormHelperText, Grid, InputAdornment, InputLabel, MenuItem, Typography, useTheme } from '@mui/material'
 import { EditingTextField } from '../../../../shared/components/TextField/TextField'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { productSchema, type ProductSchema } from '../../../../schemas/productSchema'
@@ -10,20 +10,23 @@ import { EditingSelect } from '../../../../shared/components/EditingSelect/Editi
 import type { iCategoryColumnConfig } from '../../../../shared/types/category'
 import { useCategoryQuery } from '../../../category/hooks/useCategoryQuery'
 import { formatCurrency, formatMeasurementUnit } from '../../../../shared/utils/formatters'
-import { BorderColor, InfoOutlineRounded } from '@mui/icons-material'
+import { BorderColor, InfoOutlineRounded, UploadRounded } from '@mui/icons-material'
 import { LightTooltip } from '../../../../shared/components/Tooltip/Tooltip'
 import { CenterFlexBox, StartColumnBox, StartFlexBox } from '../../../../shared/components/Boxes/Boxes'
 import { createProductApi } from '../../api/productsApi'
 import { useToastStore } from '../../../../shared/store/toastStore'
+import { queryClient } from '../../../../lib/reactQueryClient'
 
 export default function CreateProductDialog() {
 
+  const theme = useTheme()
   const renderToast = useToastStore(state => state.renderToast)
   const isCreateModalOpen = useProductStore(state => state.isCreateModalOpen)
   const closeCreateModal = useProductStore(state => state.closeCreateModal)
+  const openImportProductModal = useProductStore(state => state.openImportProductModal)
   const {data, error, isLoading } = useCategoryQuery(0, 100, '', {})
   const [categories, setCategories] = useState<iCategoryColumnConfig[]>([])
-  const {register, control, handleSubmit, formState: { errors, isSubmitting }, setError} = useForm<ProductSchema>({
+  const {register, control, handleSubmit, formState: { errors, isSubmitting }, setError, reset: resetForm} = useForm<ProductSchema>({
           resolver: zodResolver(productSchema),
           defaultValues: {
             name: '',
@@ -50,15 +53,22 @@ export default function CreateProductDialog() {
               renderToast({message: 'Produto criado com sucesso!', type: 'success', })
               console.log('Produto criado com sucesso!', returnedData.data)
               closeCreateModal()
+              queryClient.invalidateQueries({ queryKey: ['products'] });
           }else{
               renderToast({message: returnedData.message || 'Erro ao criar produto', type: 'error', })
           }
       }
 
+      const handleCloseDialog = () => {
+        closeCreateModal()
+        resetForm()
+      }
+
+
   return (
-    <Dialog
+    isCreateModalOpen && <Dialog
         open={isCreateModalOpen}
-        onClose={closeCreateModal}
+        onClose={handleCloseDialog}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
@@ -69,6 +79,13 @@ export default function CreateProductDialog() {
               <Typography fontWeight={700} variant='h5'>Criar novo produto</Typography>
               <Typography variant='body2'>Preencha os dados para criar um novo produto</Typography>
             </StartColumnBox>
+            <LightTooltip title="Importar lista de produtos via .csv">
+              <Button 
+              onClick={()=>{openImportProductModal(); handleCloseDialog()}}
+              sx={{minWidth: 0, backgroundColor: 'secondary.light', borderRadius: 1, px: 1.5, cursor: 'pointer', border: `1px solid ${theme.palette.secondary.main}`}} >
+                <UploadRounded fontSize='small' />
+              </Button>
+            </LightTooltip>
           </StartFlexBox>
         </DialogTitle>
         <DialogContent>
@@ -205,6 +222,11 @@ export default function CreateProductDialog() {
                           variant='outlined' 
                           displayEmpty
                           defaultValue=""
+                          MenuProps={{
+                              PaperProps: {
+                                  style: { maxHeight: 48 * 4.5 + 8, width: 250 },
+                              },
+                          }}
                           label="Categoria" 
                           error={!!errors.categoryId}
                           onChange={(event)=> {
@@ -225,7 +247,7 @@ export default function CreateProductDialog() {
             </Grid>
         </DialogContent>
         <DialogActions sx={{padding: 2}}>
-          <Button onClick={closeCreateModal} sx={{px: 4, py: 1}} variant='outlined'>Cancelar</Button>
+          <Button onClick={handleCloseDialog} sx={{px: 4, py: 1}} variant='outlined'>Cancelar</Button>
           <Button onClick={handleSubmit(handleOnSubmit)} sx={{px: 4, py: 1}} variant='contained'>Criar</Button>
         </DialogActions>
       </Dialog>

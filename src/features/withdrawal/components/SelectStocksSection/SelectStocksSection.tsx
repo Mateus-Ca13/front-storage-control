@@ -9,6 +9,9 @@ import { EditingTextField } from '../../../../shared/components/TextField/TextFi
 import { useKeyboardShortcuts } from '../../../../shared/hooks/useKeyboardShortcuts';
 import { useToastStore } from '../../../../shared/store/toastStore';
 import { ArrowDownwardRounded, ArrowRightAltRounded } from '@mui/icons-material';
+import { TwoColorsChip } from '../../../../shared/components/Chips/Chips';
+import { formatStockStatus } from '../../../../shared/utils/formatters';
+import { useSettingsStore } from '../../../settings/stores/SettingsStore';
 
 type SelectStocksSectionProps = {
     
@@ -22,15 +25,12 @@ type SelectStocksSectionProps = {
 
 export default function SelectStocksSection({formStepSetter, formValueGetter, formValueSetter, formTrigger, formControl, formErrors }: SelectStocksSectionProps) {
 
+    const defaultOriginStockId = useSettingsStore((state) => state.defaultOriginStockId)
     const renderToast = useToastStore(state => state.renderToast)
-    const [saveStockchecked, setSaveStockChecked] = React.useState(true);
     const [stocks, setStocks] = useState<iStockColumnConfig[]>([])
     const {data: stocksData, isLoading: stocksLoading, error: stocksError} = useStocksQuery(0, 100, '', {orderBy: 'asc', sortBy: 'name', type: null})
     
 
-    const handleSaveStockChange = () => {
-        setSaveStockChecked(prev => !prev);
-    };
 
     const originStockRef = React.useRef<HTMLInputElement>(null)
     const destinationStockRef = React.useRef<HTMLInputElement>(null)
@@ -40,12 +40,13 @@ export default function SelectStocksSection({formStepSetter, formValueGetter, fo
         const stocks = stocksData?.data?.stocks ?? [];
         console.log(stocks)
         setStocks(stocks)
-    }, [stocksData]);
+        
+    }, [stocksData, defaultOriginStockId]);
 
     useEffect(() => {
         //originStockRef.current?.focus()
         formValueSetter('destinationStockId', null)
-        formValueSetter('originStockId', null)
+        formValueSetter('originStockId', defaultOriginStockId?? null)
     }, [])
 
     useKeyboardShortcuts ({
@@ -66,9 +67,6 @@ export default function SelectStocksSection({formStepSetter, formValueGetter, fo
         'Escape': () => {
             formStepSetter('operationType')
         },
-        'F4': () => {
-            handleSaveStockChange()
-        }
     })
 
     const handleStockStep = async () => {
@@ -76,12 +74,10 @@ export default function SelectStocksSection({formStepSetter, formValueGetter, fo
         const canGoNext = await formTrigger(["originStockId", "destinationStockId"]);
 
         if (canGoNext) {
-            renderToast({message: 'deu bom', type: 'success', })
             formStepSetter('withdrawal')
         } else {
-            renderToast({message: 'deu ruim', type: 'error', })
+            renderToast({message: 'Algo deu errado!', type: 'error', })
             console.log(formErrors);
-            
         }   
     }
 
@@ -96,20 +92,32 @@ export default function SelectStocksSection({formStepSetter, formValueGetter, fo
             name="originStockId"
             rules={{ required: true }}
             control={formControl}
-            render={({ field }) => (
+            render={({ field }) => {
+            const options = stocks.map((s)=>({label: s.name, value: s.id, status: s.status}))
+            const value = options.find(option => option.value === (field.value ?? defaultOriginStockId)) || null;
+
+            console.log(value)
+            return (
             <Autocomplete
             noOptionsText="Nenhum estoque encontrado."
             fullWidth
             autoHighlight
             openOnFocus
-            options={stocks.map((s)=>({label: s.name, value: s.id}))}
-            getOptionLabel={(option) => option.label}
+            value={value}
+            options={options}
             renderOption={(props, option) => (
-                <li {...props} style={{gap: 2}}>
+                <li {...props}>
+                <StartFlexBox gap={1} alignItems="center">
                     <Typography variant='h6'  fontWeight={400}>{option.label}</Typography>
-                    
+                    <TwoColorsChip 
+                    sx={{ml: 2}}
+                    label={formatStockStatus(option.status)}
+                    colorPreset={option.status === 'ACTIVE' ? 'success' : option.status === 'INACTIVE' ? 'error' : 'warning'}
+                    />
+                </StartFlexBox>
                 </li>
             )}
+            getOptionLabel={(option) => option.label}
             isOptionEqualToValue={(opt, val) => opt.value === val.value}
             onChange={(_, value) => {field.onChange(value?.value)}} // valor real
             renderInput={(params) =>
@@ -133,7 +141,7 @@ export default function SelectStocksSection({formStepSetter, formValueGetter, fo
                 error={!!formErrors.originStockId}
                 helperText={formErrors.originStockId?.message}
                 />)}
-            />)}
+            />)}}
             />
         </CenterFlexBox>
         <CenterFlexBox alignItems={'start !important'} gap={2} width={'100%'}>
@@ -146,16 +154,23 @@ export default function SelectStocksSection({formStepSetter, formValueGetter, fo
             render={({ field }) => (
             <Autocomplete
             noOptionsText="Nenhum estoque encontrado."
-            renderOption={(props, option) => (
-                <li {...props} style={{gap: 2}}>
-                    <Typography variant='h6' fontWeight={400}>{option.label}</Typography>
-                </li>
-            )}
             autoHighlight
             openOnFocus
             fullWidth
             disabled={formValueGetter('type') === 'EXIT'}
-            options={stocks.map((s)=>({label: s.name, value: s.id}))}
+            options={stocks.map((s)=>({label: s.name, value: s.id, status: s.status}))}
+            renderOption={(props, option) => (
+                <li {...props}>
+                <StartFlexBox gap={1} alignItems="center">
+                    <Typography variant='h6'  fontWeight={400}>{option.label}</Typography>
+                    <TwoColorsChip 
+                    sx={{ml: 2}}
+                    label={formatStockStatus(option.status)}
+                    colorPreset={option.status === 'ACTIVE' ? 'success' : option.status === 'INACTIVE' ? 'error' : 'warning'}
+                    />
+                </StartFlexBox>
+                </li>
+            )}
             getOptionLabel={(option) => option.label}
             isOptionEqualToValue={(opt, val) => opt.value === val.value}
             onChange={(_, value) => {field.onChange(value?.value); }} // valor real
@@ -184,10 +199,9 @@ export default function SelectStocksSection({formStepSetter, formValueGetter, fo
             />
                             
         </CenterFlexBox>
-        <StartFlexBox alignItems={'center'} sx={{width: '100%'}} mb={8}>
-            <FormControlLabel control={<Checkbox checked={saveStockchecked} onChange={handleSaveStockChange} slotProps={{input: { 'aria-label': 'controlled' }}} size='large'/>} sx={{'& .MuiFormControlLabel-label': {fontSize: 18}}} label={<Typography variant='h6'>Salvar estoque de origem para próximas operações <strong>[F4]</strong></Typography>} />
-        </StartFlexBox>
+
         <EndFlexBox  gap={2} sx={{width: '100%'}}>
+            <Button onClick={()=>console.log(formValueGetter())}>LOG</Button>
             <Button onClick={()=>formStepSetter('operationType')} variant='outlined' sx={{ fontSize: 22, textTransform: 'none', py: 2, px: 8}}>
                 <Typography variant='h6'>Voltar<strong> [ESC]</strong></Typography>
             </Button>

@@ -4,6 +4,8 @@ export interface iStock {
     type: StockType
     status: StockStatusType
     stockedQuantities?: number
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 export interface iStockColumnConfig {

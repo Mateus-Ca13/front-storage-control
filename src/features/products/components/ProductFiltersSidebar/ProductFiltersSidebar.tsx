@@ -1,4 +1,4 @@
-import { Button, Chip, Drawer, FormControl, InputLabel, MenuItem, Select, Tooltip, Typography } from "@mui/material";
+import { Button, Chip, Drawer, FormControl, InputLabel, MenuItem, Select, Tooltip, Typography, useTheme } from "@mui/material";
 import type { ProductsSearchFiltersProps } from "../../pages/ProductsPage";
 import { BetweenFlexBox, CenterFlexBox, StartColumnBox, StartFlexBox } from "../../../../shared/components/Boxes/Boxes";
 import CheckboxOption from "../../../../shared/components/CheckboxOption/CheckboxOption";
@@ -6,7 +6,6 @@ import MultipleSelect from "../../../../shared/components/MultipleSelect/Multipl
 import { useEffect, useState, type SetStateAction } from "react";
 import { useCategoryQuery } from "../../../category/hooks/useCategoryQuery";
 import { useStocksQuery } from "../../../stocks/hooks/useStocksQuery";
-import { theme } from "../../../../theme/theme";
 import { InfoOutlineRounded } from "@mui/icons-material";
 import { LightTooltip } from "../../../../shared/components/Tooltip/Tooltip";
 
@@ -18,6 +17,7 @@ type ProductFiltersSidebarProps = {
 }
 export default function ProductFiltersSidebar({open, toggleDrawer, filters, setFiltersProps}:ProductFiltersSidebarProps) {
 
+    const theme = useTheme()
     const [stocks, setStocks] = useState<{name: string, value: string | number}[]>([])
     const { data: stocksData, isLoading: stockIsLoading, error: stockError } = useStocksQuery(0, 100, '', {type: null})
     const [categories, setCategories] = useState<{name: string, value: string | number}[]>([])

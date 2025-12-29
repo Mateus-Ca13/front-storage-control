@@ -1,8 +1,7 @@
-import React, { useState } from 'react'
+import React from 'react'
 import type { ActionMenuOption } from '../../types/actionMenuOption'
-import { Button, Divider, ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/material'
+import { Button, Divider, ListItemIcon, ListItemText, Menu, MenuItem, useTheme } from '@mui/material'
 import { MoreHoriz } from '@mui/icons-material'
-import { theme } from '../../../theme/theme'
 import { useNavigate } from 'react-router-dom'
 
 type TableActionsMenuProps = {
@@ -12,6 +11,7 @@ type TableActionsMenuProps = {
 
 export default function TableActionsMenu({ actions, id }: TableActionsMenuProps) {
 
+  const theme = useTheme()
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -59,7 +59,7 @@ export default function TableActionsMenu({ actions, id }: TableActionsMenuProps)
           return (
             <div>
               <MenuItem dense sx={{
-                '.MuiListItemText-root, .MuiListItemIcon-root': {color: action.color !== 'common' ? theme.palette[action.color!].dark : theme.palette.common.black}}} 
+                '.MuiListItemText-root, .MuiListItemIcon-root': {color: action.color !== 'common' ? theme.palette[action.color!].main : theme.palette.common.black}}} 
                 key={action.key} 
                 onClick={()=>action.action(id, navigate)}>
                 <ListItemIcon>

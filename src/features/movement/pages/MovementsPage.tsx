@@ -10,6 +10,10 @@ import { useMovementsQuery } from '../hooks/useMovementsQuery'
 import MovementsFiltersSidebar from '../components/MovementsFiltersSidebar/MovementsFiltersSidebar'
 import { movementsTableColumns } from '../helpers/movementsTableColumns'
 import { persistMovementSearchFilter } from '../../../shared/utils/persistSearchFilter'
+import { useMovementStore } from '../stores/useMovementStore'
+import CreateMovementDialog from '../components/CreateMovementDialog/CreateMovementDialog'
+import { useSettingsStore } from '../../settings/stores/SettingsStore'
+import { useNavigate } from 'react-router-dom'
 
 export type MovementsSearchFiltersProps = {
   orderBy?: 'asc' | 'desc';
@@ -21,11 +25,14 @@ export type MovementsSearchFiltersProps = {
 }
 
 export default function MovementsPage() {
+    const navigate = useNavigate()
+    const defaultPaginationRows = useSettingsStore((state) => state.defaultPaginationRows);
     const isFirstRender = useRef(true);
     const [page, setPage] = useState<number>(0);
-    const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+    const [rowsPerPage, setRowsPerPage] = useState<number>(defaultPaginationRows);
     const [searchValue, setSearchValue] = useState<string>('')
     const [filterMenuIsOpen, setFilterMenuIsOpen] = useState(false)
+    const openMovementModal = useMovementStore(state => state.openMovementModal)
     const [searchFilters, setSearchFilters] = useState<MovementsSearchFiltersProps>(
       sessionStorage.getItem('movementSearchFilters') ? 
         JSON.parse(sessionStorage.getItem('movementSearchFilters')!) : {
@@ -79,7 +86,7 @@ export default function MovementsPage() {
                     <Button onClick={()=>setFilterMenuIsOpen(true)} size='large' sx={{ height: '100%', textTransform: 'none', gap: 1}} variant='outlined' color='primary' fullWidth>Filtrar movimentações <FilterAltRounded/></Button>
                 </Grid>
                 <Grid size={{lg: 3, md: 6, sm: 12, xs: 12}}>
-                    <Button size='large' sx={{ height: '100%', textTransform: 'none', gap: 1}} variant='contained' fullWidth>Criar movimentação<AddCircleOutlineRounded/></Button>
+                    <Button size='large' onClick={()=>openMovementModal()} sx={{ height: '100%', textTransform: 'none', gap: 1}} variant='contained' fullWidth>Criar movimentação<AddCircleOutlineRounded/></Button>
                 </Grid>
                 </Grid>
                 <ListingTable
@@ -88,10 +95,11 @@ export default function MovementsPage() {
                 rowsPerPage={rowsPerPage} setRowsPerPage={setRowsPerPage} 
                 columns={movementsTableColumns} items={searchResults} 
                 rowKey={(row: iMovementColumnConfig) => row.id} 
-                onRowClick={(some)=> console.log(some)}/>
+                onRowClick={(some)=> navigate(`/dashboard/movements/${some.id}`)}/>
             </CardLayout>
             
         </Grid>
+        <CreateMovementDialog/>
         <MovementsFiltersSidebar filters={searchFilters} setFiltersProps={setSearchFilters} open={filterMenuIsOpen} toggleDrawer={setFilterMenuIsOpen} />
     </Grid>
   )

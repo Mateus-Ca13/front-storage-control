@@ -5,7 +5,7 @@ export const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
 ))(({ theme }) => ({
   [`& .${tooltipClasses.tooltip}`]: {
     backgroundColor: theme.palette.common.white,
-    color: 'rgba(0, 0, 0, 0.87)',
+    color: theme.palette.grey[800],
     border: `1px solid ${theme.palette.grey[500]}`,
     fontSize: 12,
   },

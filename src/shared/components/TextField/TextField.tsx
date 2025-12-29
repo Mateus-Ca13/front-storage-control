@@ -1,7 +1,6 @@
-import { styled, TextField } from "@mui/material";
-import { theme } from "../../../theme/theme";
+import { styled, TextField, useTheme } from "@mui/material";
 
-export const EditingTextField = styled(TextField)({
+export const EditingTextField = styled(TextField)(({ theme }) =>({
     "& .MuiInputBase-input.Mui-disabled": {
         WebkitTextFillColor: theme.palette.text.primary,
         
@@ -9,4 +8,4 @@ export const EditingTextField = styled(TextField)({
     ".Mui-disabled": {
         background: theme.palette.background.default
     }
-})
+}));

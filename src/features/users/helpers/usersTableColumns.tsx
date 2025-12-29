@@ -1,12 +1,11 @@
 import type { ColumnConfig } from "../../../shared/types/columnConfig";
 import TableActionsMenu from "../../../shared/components/TableActionsMenu/TableActionsMenu";
-import type { iUserColumnConfig } from "../../../shared/types/user";
+import type { iUserColumnConfig, UserRoleType } from "../../../shared/types/user";
 import { usersMenuActions } from "./usersMenuActions";
 import { TwoColorsChip } from "../../../shared/components/Chips/Chips";
-import type { UserRoleType } from "../../auth/types/user";
 import { formatUserRole } from "../../../shared/utils/formatters";
 import { Typography } from "@mui/material";
-import { BuildRounded, PersonOutlineOutlined, ShieldOutlined, WorkOutlineRounded } from "@mui/icons-material";
+import { PersonOutlineOutlined, ShieldOutlined, WorkOutlineRounded } from "@mui/icons-material";
 import { CenterFlexBox } from "../../../shared/components/Boxes/Boxes";
 
 

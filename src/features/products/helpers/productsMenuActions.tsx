@@ -4,6 +4,7 @@ import type { NavigateFunction } from "react-router-dom";
 import { useConfirmActionDialogStore } from "../../../shared/store/confirmActionDialogStore";
 import { deleteProductApi } from "../api/productsApi";
 import { useToastStore } from "../../../shared/store/toastStore";
+import { queryClient } from "../../../lib/reactQueryClient";
 
 
 export const productsMenuActions: ActionMenuOption[] = [
@@ -37,6 +38,7 @@ export const productsMenuActions: ActionMenuOption[] = [
                             type: 'success',
                             message: 'Produto excluído com sucesso!'
                         })
+                        queryClient.invalidateQueries({ queryKey: ['products'] });
                     } else {
                         closeConfirmActionDialog()
                         renderToast({
@@ -44,8 +46,6 @@ export const productsMenuActions: ActionMenuOption[] = [
                             message: returnedData.message?? 'Erro ao excluir produto!'
                         })
                     };
-                    
-                    navigate('/dashboard/products')
                 }},
                 cancelAction: {label: 'Cancelar', onClick: () => {
                     closeConfirmActionDialog()

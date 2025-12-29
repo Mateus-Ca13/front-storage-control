@@ -1,8 +1,7 @@
 import type { AxiosError } from "axios"
 import api from "../../../config/api"
 import type { iResponse } from "../../../shared/types/response"
-import type { iUserColumnConfig } from "../../../shared/types/user"
-import type { iUser } from "../../auth/types/user"
+import type { iUser, iUserColumnConfig } from "../../../shared/types/user"
 import type { CreateUserDTO, PasswordSchema, UserSchema } from "../../../schemas/userSchema"
 
 type iGetUsersReponse = iResponse<{pagination: Record<string, number>, users: (iUserColumnConfig)[]}>

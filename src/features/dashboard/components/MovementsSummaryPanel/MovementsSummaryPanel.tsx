@@ -1,7 +1,6 @@
-import { Button, Grid, Typography } from "@mui/material";
+import { Button, Grid, Typography, useTheme } from "@mui/material";
 import { CardLayout } from "../../../../shared/components/Cards/Cards";
 import { CenterColumnBox, StartColumnBox } from "../../../../shared/components/Boxes/Boxes";
-import { theme } from "../../../../theme/theme";
 import MovementSummaryCard from "./MovementSummaryCard/MovementSummaryCard";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -10,11 +9,11 @@ import type { iMovementColumnConfig } from "../../../../shared/types/movement";
 
 
 export default function MovementsSummaryPanel() {
+    
     const navigate = useNavigate()
-
+    const theme = useTheme()
     const [movements, setMovements] = useState<iMovementColumnConfig[]>([])
-
-    const { data, isLoading, error } = useMovementsQuery(0, 5, '', {orderBy: 'desc', sortBy: 'createdAt'})
+    const { data } = useMovementsQuery(0, 3, '', {orderBy: 'desc', sortBy: 'createdAt'})
 
     useEffect(() => {
         const movements = data?.data?.movements ?? [];

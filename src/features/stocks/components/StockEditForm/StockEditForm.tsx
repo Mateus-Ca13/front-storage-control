@@ -1,4 +1,4 @@
-import { FormControl, Grid, InputLabel, MenuItem, Typography } from '@mui/material'
+import { Divider, FormControl, Grid, InputLabel, MenuItem, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { BetweenFlexBox, StartColumnBox, StartFlexBox } from '../../../../shared/components/Boxes/Boxes'
 import { stockSchema, type StockSchema } from '../../../../schemas/stockSchema'
@@ -7,12 +7,14 @@ import { useToastStore } from '../../../../shared/store/toastStore'
 import { StockStatusTypeTuple, StockTypeTuple, type iStock, type StockStatusType, type StockType } from '../../../../shared/types/stock'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { updateStockApi } from '../../api/stocksApi'
+import { deleteStockApi, updateStockApi } from '../../api/stocksApi'
 import { EditingTextField } from '../../../../shared/components/TextField/TextField'
 import EditStateButton from '../../../../shared/components/EditStateButton/EditStateButton'
 import { EditingSelect } from '../../../../shared/components/EditingSelect/EditingSelect'
-import { formatStockStatus, formatStockType } from '../../../../shared/utils/formatters'
+import { formatStockStatus, formatStockType, formatTimestamp } from '../../../../shared/utils/formatters'
 import { WarehouseRounded } from '@mui/icons-material'
+import DeleteEntityButton from '../../../../shared/components/DeleteEntityButton/DeleteEntityButton'
+import { useNavigate } from 'react-router-dom'
 
 type StockEditFormProps = {
     stock: iStock | null    
@@ -21,6 +23,7 @@ type StockEditFormProps = {
 
 export default function StockEditForm({stock}: StockEditFormProps) {
 
+    const navigate = useNavigate()
     const renderConfirmActionDialog = useConfirmActionDialogStore(state => state.renderConfirmActionDialog) 
     const closeConfirmActionDialog = useConfirmActionDialogStore(state => state.handleClose)
     const renderToast = useToastStore(state => state.renderToast)
@@ -65,6 +68,34 @@ export default function StockEditForm({stock}: StockEditFormProps) {
         setEditingStockData({...editingStockData!, [prop]: value}) 
     }
 
+    const handleDeleteStock = async (stockId: number) => {
+        renderConfirmActionDialog({
+            title: 'Excluir Estoque?',
+            message: 'Você tem certeza que deseja excluir este estoque? Essa ação não pode ser desfeita.',
+            confirmAction: {label: 'Excluir', onClick: async () => {
+                const returnedData = await deleteStockApi(stockId)
+
+                if(returnedData?.success) {
+                    closeConfirmActionDialog()
+                    renderToast({
+                        type: 'success',
+                        message: 'Estoque excluído com sucesso!'
+                    })
+                    navigate(-1)
+                } else {
+                    closeConfirmActionDialog()
+                    renderToast({
+                        type: 'error',
+                        message: returnedData?.message?? 'Erro ao excluir estoque!'
+                    })
+                };
+            }},
+            cancelAction: {label: 'Cancelar', onClick: () => {
+                closeConfirmActionDialog()
+            }}
+        })
+    }
+
 
   return (
     <Grid component={'form'} onSubmit={handleSubmit(handleOnSubmit)} container spacing={2} mb={2}>
@@ -80,7 +111,14 @@ export default function StockEditForm({stock}: StockEditFormProps) {
                 </StartColumnBox>
                 </StartFlexBox>
             </Grid>
-            <Grid container gap={2} size={{xl: onEditing? 6 : 3, lg: onEditing? 6 : 3, md: onEditing? 6 : 3, sm: 12, xs: 12}}>
+            <Grid container gap={2} size={{xl: 6, lg: 6, md:6, sm: 12, xs: 12}}>
+                {!onEditing && <Grid size={{xl: 6, lg: 6, md: 6, sm: 12, xs: 12}}>
+                    <DeleteEntityButton
+                    entityLabel='estoque'
+                    onClick={() => handleDeleteStock(stock!.id)}
+                    />
+                </Grid>
+                }
                 <EditStateButton
                 state={onEditing} 
                 setState={setOnEditing} 
@@ -165,7 +203,9 @@ export default function StockEditForm({stock}: StockEditFormProps) {
                 </EditingSelect>
             </FormControl>
         </Grid>
-        
+        <Typography color='secondary'><em>Criado em {formatTimestamp(editingStockData?.createdAt ?? '')}</em></Typography>
+            <Divider orientation='vertical' flexItem/>
+            <Typography color='secondary'><em>Última atualização em {formatTimestamp(editingStockData?.updatedAt ?? '')}</em></Typography>
     </Grid>
   )
 }

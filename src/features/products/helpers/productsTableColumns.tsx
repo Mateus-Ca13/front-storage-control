@@ -2,7 +2,7 @@ import { ArrowForwardIosRounded, ArrowForwardRounded, CancelRounded, Category, C
 import { CenterFlexBox } from "../../../shared/components/Boxes/Boxes";
 import { CategoryChip, TwoColorsChip } from "../../../shared/components/Chips/Chips";
 import type { ColumnConfig } from "../../../shared/types/columnConfig";
-import type { iMinimizedProductColumnConfig, iProductAddedToMovementColumnConfig, iProductColumnConfig } from "../../../shared/types/product";
+import type { iMinimizedProductColumnConfig, iProductAddedToMovementColumnConfig, iProductColumnConfig, iProductsImportCsvReturn } from "../../../shared/types/product";
 import { formatMovementType, formatPrice, formatStockType, formatStringToMaxLength, formatTimestamp } from "../../../shared/utils/formatters";
 import TableActionsMenu from "../../../shared/components/TableActionsMenu/TableActionsMenu";
 import { productsMenuActions } from "./productsMenuActions";
@@ -10,6 +10,7 @@ import type { iMinimizedProductMovementsColumnConfig } from "../../../shared/typ
 import { Button, Typography } from "@mui/material";
 import type { AddProductToMovementSchema } from "../../../schemas/MovementSchema";
 import { LightTooltip } from "../../../shared/components/Tooltip/Tooltip";
+import type { ProductSchema } from "../../../schemas/productSchema";
 
 
 export const productsTableColumns: ColumnConfig<iProductColumnConfig>[] = [
@@ -196,7 +197,7 @@ export const withdrawalProductMovementsTableColumns: ColumnConfig<iProductAddedT
 
     {
         key: 'codebar',
-        header: 'ID',
+        header: 'Código',
         align: 'center',
         minWidth: 20,
     },
@@ -227,6 +228,8 @@ export const withdrawalProductMovementsTableColumns: ColumnConfig<iProductAddedT
         format: (value, product) => `R$ ${formatPrice((product?.pricePerUnit ?? 0) * (product?.quantity ?? 0))}`
     },
 ]
+
+
 
 
 

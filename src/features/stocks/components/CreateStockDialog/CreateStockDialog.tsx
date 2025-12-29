@@ -11,13 +11,14 @@ import { stockSchema, type StockSchema } from '../../../../schemas/stockSchema'
 import { useStockStore } from '../../stores/useStockStore'
 import { createStockApi } from '../../api/stocksApi'
 import { StockStatusTypeTuple, StockTypeTuple } from '../../../../shared/types/stock'
+import { queryClient } from '../../../../lib/reactQueryClient'
 
 export default function CreateStockDialog() {
 
   const renderToast = useToastStore(state => state.renderToast)
   const isCreateModalOpen = useStockStore(state => state.isCreateModalOpen)
   const closeCreateModal = useStockStore(state => state.closeCreateModal)
-  const {register, control, handleSubmit, formState: { errors, isSubmitting }, setError} = useForm<StockSchema>({
+  const {register, control, handleSubmit, formState: { errors, isSubmitting }, setError, reset: resetForm} = useForm<StockSchema>({
           resolver: zodResolver(stockSchema),
           defaultValues: {
             name: '',      
@@ -31,18 +32,26 @@ export default function CreateStockDialog() {
           if (returnedData.success){
               renderToast({message: 'Estoque criado com sucesso!', type: 'success', })
               console.log('Estoque criado com sucesso!', returnedData.data)
-              closeCreateModal()
+              handleCloseDialog()
+              queryClient.invalidateQueries({ queryKey: ['stocks'] });
           }else{
               renderToast({message: returnedData.message || 'Erro ao criar estoque', type: 'error', })
           }
       }
 
+      const handleCloseDialog = () => {
+        closeCreateModal()
+        resetForm()
+      }
+
+
+
   return (
-    <Dialog
+    isCreateModalOpen && <Dialog
         fullWidth
         maxWidth='sm'
         open={isCreateModalOpen}
-        onClose={closeCreateModal}
+        onClose={handleCloseDialog}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
@@ -114,7 +123,7 @@ export default function CreateStockDialog() {
             </Grid>
         </DialogContent>
         <DialogActions sx={{padding: 2}}>
-          <Button onClick={closeCreateModal} sx={{px: 4, py: 1}} variant='outlined'>Cancelar</Button>
+          <Button onClick={handleCloseDialog} sx={{px: 4, py: 1}} variant='outlined'>Cancelar</Button>
           <Button onClick={handleSubmit(handleOnSubmit)} sx={{px: 4, py: 1}} variant='contained'>Criar</Button>
         </DialogActions>
       </Dialog>

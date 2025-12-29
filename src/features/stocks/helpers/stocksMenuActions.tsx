@@ -1,9 +1,10 @@
-import { DeleteRounded, EditRounded, VisibilityRounded } from "@mui/icons-material";
+import { DeleteRounded, VisibilityRounded } from "@mui/icons-material";
 import type { ActionMenuOption } from "../../../shared/types/actionMenuOption";
 import type { NavigateFunction } from "react-router-dom";
 import { useConfirmActionDialogStore } from "../../../shared/store/confirmActionDialogStore";
 import { useToastStore } from "../../../shared/store/toastStore";
 import { deleteStockApi } from "../api/stocksApi";
+import { queryClient } from "../../../lib/reactQueryClient";
 
 
 export const stocksMenuActions: ActionMenuOption[] = [
@@ -24,7 +25,7 @@ export const stocksMenuActions: ActionMenuOption[] = [
             const renderToast = useToastStore.getState().renderToast;
 
             renderConfirmActionDialog({
-                title: 'Excluir produto?',
+                title: 'Excluir Estoque?',
                 message: 'Você tem certeza que deseja excluir este estoque? Essa ação não pode ser desfeita.',
                 confirmAction: {label: 'Excluir', onClick: async () => {
                     const returnedData = await deleteStockApi(id)
@@ -35,6 +36,7 @@ export const stocksMenuActions: ActionMenuOption[] = [
                             type: 'success',
                             message: 'Estoque excluído com sucesso!'
                         })
+                        queryClient.invalidateQueries({ queryKey: ['stocks'] });
                     } else {
                         closeConfirmActionDialog()
                         renderToast({
@@ -42,8 +44,6 @@ export const stocksMenuActions: ActionMenuOption[] = [
                             message: returnedData?.message?? 'Erro ao excluir estoque!'
                         })
                     };
-                    
-                    navigate('/dashboard/stocks')
                 }},
                 cancelAction: {label: 'Cancelar', onClick: () => {
                     closeConfirmActionDialog()

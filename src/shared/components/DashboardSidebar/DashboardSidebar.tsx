@@ -1,19 +1,28 @@
-import { Divider, Drawer, List, styled, Typography, type DrawerProps } from "@mui/material";
-import { use, useState } from "react";
+import { Divider, Drawer, List, styled, Typography, useTheme, type DrawerProps } from "@mui/material";
+import { useState } from "react";
 import type { SidebarItem } from "../../types/sidebarListItems";
-import { AccountCircle, AddCircleOutlineRounded, ControlPointRounded, 
+import { AccountCircle, ControlPointRounded, 
     DashboardRounded, DiscountRounded, ExitToAppOutlined, 
-    FormatListBulletedRounded, Help, CategoryRounded, 
+     Help, CategoryRounded, 
     PeopleAlt, RemoveCircleOutlineRounded, 
     Settings, 
     SwapHorizontalCircleOutlined, SyncAltOutlined, 
-    VideoLabelOutlined, WarehouseRounded, WifiProtectedSetupRounded } from "@mui/icons-material";
+    VideoLabelOutlined, WarehouseRounded, WifiProtectedSetupRounded, 
+    WorkOutlineRounded,
+    PersonOutlineOutlined,
+    ShieldOutlined} from "@mui/icons-material";
 import SidebarListItem from "./SidebarListItem/SidebarListItem";
-import { CenterFlexBox } from "../Boxes/Boxes";
-import { theme } from "../../../theme/theme";
+import { CenterColumnBox, CenterFlexBox, StartFlexBox } from "../Boxes/Boxes";
 import { useNavigate } from "react-router-dom";
 import { persistCategorySearchFilter, persistMovementSearchFilter, persistProductSearchFilter, persistStockSearchFilter, persistUserSearchFilter } from "../../utils/persistSearchFilter";
 import { useMovementStore } from "../../../features/movement/stores/useMovementStore";
+import { useConfirmActionDialogStore } from "../../store/confirmActionDialogStore";
+import { logoutSession } from "../../../features/auth/helpers/logoutSession";
+import { useAuthStore } from "../../../features/auth/stores/useAuthStore";
+import { formatStringToMaxLength, formatUserRole } from "../../utils/formatters";
+import { TwoColorsChip } from "../Chips/Chips";
+import type { UserRoleType } from "../../types/user";
+import { LightTooltip } from "../Tooltip/Tooltip";
 
 
 const SidebarDrawer =  styled(Drawer)<DrawerProps>({
@@ -29,15 +38,19 @@ const SidebarDrawer =  styled(Drawer)<DrawerProps>({
     },
 });
 
-
-
-
 export default function DashboardSidebar() {
+
+    const theme = useTheme()
     const [open, setOpen] = useState<boolean>(false);
+    const userInfo = useAuthStore(state => state.user)
     const navigate = useNavigate();
+    const renderConfirmActionDialog = useConfirmActionDialogStore(state => state.renderConfirmActionDialog)
+    const closeConfirmActionDialog = useConfirmActionDialogStore(state => state.handleClose)
     const {openEntryModal, openExitModal, openTransferModal} = useMovementStore()
     const drawerWidth = 320;
     const closedWidth = 60;
+    const version = __APP_VERSION__;
+    const hash = __COMMIT_HASH__;
 
     const mainSidebarListItems: SidebarItem[] = [
         { type: 'link', text: 'Visão Geral', path: '/dashboard', icon: <DashboardRounded/> },
@@ -50,16 +63,34 @@ export default function DashboardSidebar() {
         { type: 'button', text: 'Estoques',  onClick: ()=>{persistStockSearchFilter({}); navigate('/dashboard/stocks')}, icon: <WarehouseRounded/>},
         { type: 'button', text: 'Categorias', onClick: ()=>{persistCategorySearchFilter({}); navigate('/dashboard/categories')}, icon: <DiscountRounded/> },
         { type: 'button', text: 'Movimentações', onClick: ()=>{persistMovementSearchFilter({}); navigate('/dashboard/movements')}, icon: <SyncAltOutlined/> },
-        { type: 'link', text: 'Caixa (Operacional)', path: '/dashboard/withdrawal', icon:  <VideoLabelOutlined/>},
         { type: 'button', text: 'Usuários', onClick: ()=>{persistUserSearchFilter({}); navigate('/dashboard/users')}, icon: <PeopleAlt/> },
+        { type: 'link', text: 'Caixa (Operacional)', path: '/dashboard/withdrawal', icon:  <VideoLabelOutlined/>},
     
     ]
 
     const footerSidebarListItems: SidebarItem[] = [
         { type: 'link', text: 'Configurações', path: '/dashboard/settings', icon: <Settings/> },
         { type: 'link', text: 'Ajuda', path: '/dashboard/help', icon: <Help/> },
-        { type: 'button', text: 'Sair', onClick: ()=>{}, icon: <ExitToAppOutlined/> },
+        { type: 'button', text: 'Sair', onClick: ()=>{handleLogout()}, icon: <ExitToAppOutlined/> },
     ]
+
+    const handleLogout = () => {
+        renderConfirmActionDialog({
+            title: 'Encerrar sessão?',
+            message: 'Sua sessão será encerrada e você precisará fazer login novamente.',
+            confirmAction: {
+                label: 'Sair',
+                onClick: () => { 
+                    logoutSession(); 
+                    closeConfirmActionDialog(); 
+                }
+            },
+            cancelAction: {
+                label: 'Cancelar',
+                onClick: () => {closeConfirmActionDialog()}
+            }
+        })
+    }
 
   return (
     <SidebarDrawer 
@@ -78,31 +109,52 @@ export default function DashboardSidebar() {
 
             },
         }}>
-        <Typography variant="h6" noWrap component="div" sx={{ padding: 2 }}>
-            <CenterFlexBox 
-            gap={2} 
-            sx={{ 
-                marginTop: 2,
-                marginBottom: 2,
-                '& .MuiSvgIcon-root, & .MuiTypography-root': { 
-                    color: theme.palette.primary.main,  
-                    fontWeight: 600
-                }}}>
-                <AccountCircle fontSize="large"/> {open && <Typography noWrap variant="h6">Olá, usuário!</Typography>}
-            </CenterFlexBox>
-        </Typography>
+        <CenterColumnBox>
+        <StartFlexBox 
+        gap={1} 
+        sx={{ 
+            marginTop: 3,
+            marginBottom: 3
+            }}>
+            <AccountCircle fontSize="large" color="primary"/> {open && <Typography color="primary" noWrap variant="h6">Olá, {formatStringToMaxLength(userInfo?.username.split(" ")[0], 20)}!</Typography>}
+            {open &&
+            <LightTooltip title={formatUserRole(userInfo?.role as UserRoleType)} placement="right">
+                <TwoColorsChip
+                sx={{
+                    '& .MuiChip-label': {
+                        p: 1,
+                        borderRadius: 100
+                    }
+                }}
+                colorPreset={userInfo?.role === 'ADMIN' ? 'info' : userInfo?.role === 'USER' ? 'success' : userInfo?.role === 'SUPER_ADMIN' ? 'warning' : 'error'} 
+                label={
+                    <CenterFlexBox gap={1}>
+                        {userInfo?.role === 'ADMIN' ? <WorkOutlineRounded sx={{ fontSize: 18}}/> : 
+                        userInfo?.role === 'USER' ? <PersonOutlineOutlined sx={{ fontSize: 18}}/> : 
+                        userInfo?.role === 'SUPER_ADMIN' ? <ShieldOutlined sx={{ fontSize: 18}}/> : 
+                        '—'}
+                    </CenterFlexBox>
+                }/>
+            </LightTooltip>
+            }
+        </StartFlexBox>
+        </CenterColumnBox>
         <Divider variant="middle"/>
         <List>
             {mainSidebarListItems.map((item, index) => (
                 <SidebarListItem key={index} listItem={item} index={index} isSidebarOpen={open}/>
             ))}
         </List>  
+        
         <Divider variant="middle"/>
         <List>
             {footerSidebarListItems.map((item, index) => (
                 <SidebarListItem key={index} listItem={item} index={index} isSidebarOpen={open}/>
             ))}
         </List>  
+        <CenterFlexBox sx={{opacity: open? '100%': '0%', transition: '0.3s all'}} marginTop={'auto'} mb={2}>
+        <Typography variant="body2" color="secondary">v{version} - build {hash}</Typography>
+        </CenterFlexBox>
     </SidebarDrawer>
   )
 }

@@ -1,4 +1,6 @@
-import type { iMinimizedProductMovementsColumnConfig, iMovementProduct } from "./movement"
+import type { ZodIssue } from "zod/v3"
+import type { ProductSchema } from "../../schemas/productSchema"
+import type { iMinimizedProductMovementsColumnConfig } from "./movement"
 import type { StockType } from "./stock"
 
 export interface iProduct {
@@ -10,13 +12,13 @@ export interface iProduct {
     lastPrice: number | null
     categoryId: number | null
     createdAt: Date;
+    updatedAt: Date;
     minStock: number
     isBelowMinStock: boolean
     stockedQuantities?: { quantity: number, stock: {id: number, name: string, type: StockType} }[]
     movements?: iMinimizedProductMovementsColumnConfig[]
 
 }
-
     
 export interface iProductColumnConfig {
     id: number
@@ -48,6 +50,11 @@ export interface iProductAddedToMovementColumnConfig {
     excludeAction: (...args: any[]) => any
 }
 
+export interface iProductsImportCsvReturn {
+    data: ProductSchema
+    errors: any[]
+    success: boolean
+}
 
 export type ProductUpdateInput = Partial<Omit<iProduct, 'id' | 'createdAt' | 'isBelowMinStock' | 'stockedQuantities' | 'movements' >>;
 

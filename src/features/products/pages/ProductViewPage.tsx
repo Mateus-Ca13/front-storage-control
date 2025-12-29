@@ -11,12 +11,14 @@ import { formatMeasurementUnit } from '../../../shared/utils/formatters'
 import { TwoColorsChip } from '../../../shared/components/Chips/Chips'
 import ListingTable from '../../../shared/components/ListingTable/ListingTable'
 import { productMovementsTableColumns, minimizedProductsTableColumns } from '../helpers/productsTableColumns'
+import NotFoundedWarning from '../../../shared/components/NotFoundedWarning/NotFoundedWarning'
+import LoadingOverlay from '../../../shared/components/LoadingOverlay/LoadingOverlay'
 
 export default function ProductViewPage() {
     const navigate = useNavigate()
     const { id } = useParams()
     const [product, setProduct] = useState<iProduct | null>(null)
-    const { data: productData } = useProductByIdQuery(Number(id))
+    const { data: productData, isLoading: productIsLoading} = useProductByIdQuery(Number(id))
     
     useEffect(() => {
         if (productData?.data) {
@@ -30,11 +32,14 @@ export default function ProductViewPage() {
 
 
   return (
-     <Grid container  size={{xl: 12, lg: 12, md: 12, sm: 12, xs: 12}} spacing={2}>
-            <CardLayout sx={{padding: 2, width: '100%'}}>
-                <ProductEditForm product={product}/>
-            </CardLayout>
-            <Grid size={{xl: 6, lg: 6, md: 6, sm: 12, xs: 12}}>
+    productData?.success || productIsLoading?
+    productIsLoading?
+    <LoadingOverlay/>:
+    <Grid container  size={{xl: 12, lg: 12, md: 12, sm: 12, xs: 12}} spacing={2}>
+        <CardLayout sx={{padding: 2, width: '100%'}}>
+            <ProductEditForm product={product}/>
+        </CardLayout>
+        <Grid size={{xl: 6, lg: 6, md: 6, sm: 12, xs: 12}}>
             <CardLayout sx={{padding: 2, width: '100%',justifyContent: 'space-between', display: 'flex', flexDirection: 'column'}} >  
                 <StartFlexBox flexWrap={'wrap'} columnGap={2} rowGap={1}  mb={2}>
                     <Typography color='primary' fontWeight={700} variant='h5'>Quantidade em estoque</Typography>
@@ -43,10 +48,10 @@ export default function ProductViewPage() {
                     colorPreset='error' 
                     label={
                         <CenterFlexBox gap={1}>
-                        <Typography color='error' fontWeight={500} variant='body2'>
+                        <Typography color='error.dark' fontWeight={500} variant='body2'>
                             Produto abaixo do estoque mínimo 
                             </Typography>
-                        <Warning color='error' sx={{fontSize: 16}}/>
+                        <Warning color={'error.dark' as 'inherit'} sx={{fontSize: 16}}/>
                         </CenterFlexBox>
                     }
                     />
@@ -71,8 +76,8 @@ export default function ProductViewPage() {
                     <Typography variant='body1'>Quantidade total estocada: <strong>{Number(product?.stockedQuantities!.reduce((acc, curr) => acc + curr.quantity, 0))} {formatMeasurementUnit(product?.measurement?? 'UN', 'plural')}</strong></Typography>
                 </EndFlexBox>
             </CardLayout>
-            </Grid>
-            <Grid size={{xl: 6, lg: 6, md: 6, sm: 12, xs: 12}}>
+        </Grid>
+        <Grid size={{xl: 6, lg: 6, md: 6, sm: 12, xs: 12}}>
             <CardLayout sx={{padding: 2, width: '100%', justifyContent: 'space-between', display: 'flex', flexDirection: 'column'}}>
                 <Typography color='primary' fontWeight={700} variant='h5'>Últimas movimentações</Typography>
                 <Grid size={{xl: 12, lg: 12, md: 12, sm: 12, xs: 12}} mt={4} container spacing={2}>
@@ -93,6 +98,7 @@ export default function ProductViewPage() {
                 </EndFlexBox>
             </CardLayout>
         </Grid>
-    </Grid>
+    </Grid>:
+    <NotFoundedWarning/>
   )
 }

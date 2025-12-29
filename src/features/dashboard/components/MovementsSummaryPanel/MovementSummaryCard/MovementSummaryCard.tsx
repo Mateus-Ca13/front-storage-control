@@ -1,19 +1,20 @@
 import { formatMovementType, formatStringToMaxLength, formatTimestamp } from "../../../../../shared/utils/formatters"
 import { BetweenFlexBox, CenterFlexBox, StartFlexBox } from "../../../../../shared/components/Boxes/Boxes"
-import { Box, Button, Chip, Divider, Typography }  from "@mui/material"
-import { theme } from "../../../../../theme/theme"
-import type { MovementSummaryProps } from "../../../types/movementSummary"
+import { Box, Button, Chip, Divider, Typography, useTheme }  from "@mui/material"
 import { ArrowForwardRounded, Visibility } from "@mui/icons-material"
 import type { iMovementColumnConfig } from "../../../../../shared/types/movement"
 
 
 export default function MovementSummaryCard( movement: iMovementColumnConfig & {onClick: (...args: any)=> any}) {
+
+  const theme = useTheme()
   return (
     
       <Button onClick={movement.onClick} sx={{ textTransform: 'none'}} variant="outlined" fullWidth>   
           <BetweenFlexBox>
             <Box my={1}>
               <StartFlexBox gap={1}>
+                <Typography variant="body2" fontWeight={600}>Movimentação {movement.id}</Typography>
                 <Chip
                 sx={{
                   color: movement.type === 'TRANSFER' ? 'warning.dark' : movement.type === 'ENTRY' ? 'success.dark' : 'error.dark',

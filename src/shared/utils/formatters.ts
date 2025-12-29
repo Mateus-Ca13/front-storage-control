@@ -1,6 +1,6 @@
-import type { UserRoleType } from "../../features/auth/types/user";
 import type { ProductMeasurementType } from "../types/product";
 import type { StockStatusType, StockType } from "../types/stock";
+import type { UserRoleType } from "../types/user";
 
 export function formatMovementType(type: 'TRANSFER' | 'ENTRY' | 'EXIT'): string {
     switch (type) {
@@ -10,12 +10,14 @@ export function formatMovementType(type: 'TRANSFER' | 'ENTRY' | 'EXIT'): string 
             return 'Entrada';
         case 'EXIT':
             return 'Saída';
+        default:
+            return 'N/A';
     }
 }
 
 export function formatTimestamp(input: string | Date, mode: "full" | "short" = "full"): string {
 
-    input
+    if (!input) return "N/A";
     const date = input instanceof Date ? input : new Date(input);
 
     const fullOptions: Intl.DateTimeFormatOptions = {
@@ -40,6 +42,9 @@ export function formatTimestamp(input: string | Date, mode: "full" | "short" = "
 }
 
 export function formatPrice(price: number | string): string{
+    
+    if (!price) return "0,00";
+
     if (price === null || price === undefined || price === "") return "0,00";
     const num = typeof price === "string" ? parseFloat(price) : price;
 
@@ -81,7 +86,7 @@ export function formatUserRole(role: UserRoleType){
         case 'SUPER_ADMIN':
             return 'Super Administrador';
         default:
-            return 'Usuário';
+            return 'Desconhecido';
     }
 }
 

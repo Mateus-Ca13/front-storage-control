@@ -6,7 +6,6 @@ import { ProductMeasurementTuple } from "../shared/types/product";
 export const movementSchema = z.object({
     type: z.enum(MovementTuple, {error: "Insira uma opção válida"}),
     observations: z.string(),
-    userCreatorId: z.number(),
     originStockId: z.number("Selecione um estoque válido").nullable(),
     destinationStockId: z.number("Selecione um estoque válido").nullable(),
     products: z.array(z.object({ 

@@ -47,3 +47,13 @@ export const createMovementApi = async (data: MovementSchema): Promise<iResponse
     }
 }
 
+export const deleteMovementApi = async (id: number): Promise<iResponse<iMovementColumnConfig>> => {
+    try {
+        const response  = await api.delete(`movements/${id}`).then(res => res.data)
+        return response as iResponse<iMovementColumnConfig>
+        
+    } catch (error: AxiosError | any) {
+        return {...error.response.data, data: {}} as iResponse<iMovementColumnConfig>
+    }
+}
+

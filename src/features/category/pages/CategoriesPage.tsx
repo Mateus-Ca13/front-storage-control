@@ -12,6 +12,8 @@ import CategoriesFiltersSidebar from '../components/CategoriesFiltersSidebar/Cat
 import { persistCategorySearchFilter } from '../../../shared/utils/persistSearchFilter'
 import CreateCategoryDialog from '../components/CreateCategoryDialog/CreateCategoryDialog'
 import { useCategoryStore } from '../stores/useCategoryStore'
+import { useSettingsStore } from '../../settings/stores/SettingsStore'
+import { useNavigate } from 'react-router-dom'
 
 export type CategoriesSearchFiltersProps = {
   orderBy?: 'asc' | 'desc';
@@ -19,10 +21,12 @@ export type CategoriesSearchFiltersProps = {
 }
 
 export default function CategoriesPage() {
+    const navigate = useNavigate()
+    const defaultPaginationRows = useSettingsStore((state) => state.defaultPaginationRows);
     const openCreateModal = useCategoryStore((state) => state.openCreateModal)
     const isFirstRender = useRef(true);
     const [page, setPage] = useState<number>(0);
-    const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+    const [rowsPerPage, setRowsPerPage] = useState<number>(defaultPaginationRows);
     const [searchValue, setSearchValue] = useState<string>('')
     const [filterMenuIsOpen, setFilterMenuIsOpen] = useState(false)
     const [searchFilters, setSearchFilters] = useState<CategoriesSearchFiltersProps>(
@@ -80,7 +84,7 @@ export default function CategoriesPage() {
                 rowsPerPage={rowsPerPage} setRowsPerPage={setRowsPerPage} 
                 columns={categoryTableColumns} items={searchResults} 
                 rowKey={(row: iCategoryColumnConfig) => row.id} 
-                onRowClick={(some)=> console.log(some)}/>
+                onRowClick={(some)=> navigate(`/dashboard/categories/${some.id}`)}/>
             </CardLayout>
             
         </Grid>

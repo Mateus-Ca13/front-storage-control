@@ -7,14 +7,16 @@ import type { iCategory } from '../../../../shared/types/category'
 import { categorySchema, type CategorySchema } from '../../../../schemas/categorySchema'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { updateCategoryApi } from '../../api/categoryApi'
-import { FormControl, Grid, InputLabel, MenuItem, Typography } from '@mui/material'
+import { deleteCategoryApi, updateCategoryApi } from '../../api/categoryApi'
+import { Divider, FormControl, Grid, InputLabel, MenuItem, Typography, useTheme } from '@mui/material'
 import EditStateButton from '../../../../shared/components/EditStateButton/EditStateButton'
 import { EditingTextField } from '../../../../shared/components/TextField/TextField'
 import { EditingSelect } from '../../../../shared/components/EditingSelect/EditingSelect'
-import { theme } from '../../../../theme/theme'
 import { DiscountRounded } from '@mui/icons-material'
-import { StartColumnBox, StartFlexBox } from '../../../../shared/components/Boxes/Boxes'
+import { EndFlexBox, StartColumnBox, StartFlexBox } from '../../../../shared/components/Boxes/Boxes'
+import { formatTimestamp } from '../../../../shared/utils/formatters'
+import DeleteEntityButton from '../../../../shared/components/DeleteEntityButton/DeleteEntityButton'
+import { useNavigate } from 'react-router-dom'
 
 type CategoryEditFormProps = {
     category: iCategory | null
@@ -22,7 +24,9 @@ type CategoryEditFormProps = {
 
 
 export default function CategoryEditForm({ category } : CategoryEditFormProps) {
-
+    
+    const navigate = useNavigate()
+    const theme = useTheme()
     const renderConfirmActionDialog = useConfirmActionDialogStore(state => state.renderConfirmActionDialog) 
     const closeConfirmActionDialog = useConfirmActionDialogStore(state => state.handleClose)
     const renderToast = useToastStore(state => state.renderToast)
@@ -31,6 +35,35 @@ export default function CategoryEditForm({ category } : CategoryEditFormProps) {
     const {register, handleSubmit, formState: { errors, isSubmitting }, setError} = useForm<CategorySchema>({
             resolver: zodResolver(categorySchema),
         });
+
+
+    const handleDeleteCategory = async (categoryId: number) => {
+        renderConfirmActionDialog({
+        title: 'Excluir categoria?',
+        message: 'Você tem certeza que deseja excluir esta categoria? Essa ação não pode ser desfeita.',
+        confirmAction: {label: 'Excluir', onClick: async () => {
+            const returnedData = await deleteCategoryApi(categoryId)
+
+            if(returnedData?.success) {
+                closeConfirmActionDialog()
+                renderToast({
+                    type: 'success',
+                    message: `Categoria excluída com sucesso! ${returnedData.data.updatedProductsCount} produto(s) foram desassociados.`
+                })
+                navigate(-1)
+            } else {
+                closeConfirmActionDialog()
+                renderToast({
+                    type: 'error',
+                    message: returnedData?.message?? 'Erro ao excluir categoria!'
+                })
+            };
+        }},
+        cancelAction: {label: 'Cancelar', onClick: () => {
+            closeConfirmActionDialog()
+        }}
+    })
+    }
    
     
     useEffect(() => {
@@ -82,7 +115,14 @@ export default function CategoryEditForm({ category } : CategoryEditFormProps) {
                     </StartColumnBox>
                 </StartFlexBox>
             </Grid>
-            <Grid container gap={2} size={{xl: onEditing? 6 : 3, lg: onEditing? 6 : 3, md: onEditing? 6 : 3, sm: 12, xs: 12}}>
+            <Grid container gap={2} size={{xl: 6, lg:  6, md:  6, sm: 12, xs: 12}}>
+                {!onEditing && <Grid size={{xl: 6, lg: 6, md: 6, sm: 12, xs: 12}}>
+                    <DeleteEntityButton
+                    entityLabel='categoria'
+                    onClick={() => handleDeleteCategory(category!.id)}
+                    />
+                </Grid>
+                }
                 <EditStateButton
                 state={onEditing} 
                 setState={setOnEditing} 
@@ -143,6 +183,9 @@ export default function CategoryEditForm({ category } : CategoryEditFormProps) {
             value={editingCategoryData?.id}
             />
         </Grid>
+        <Typography color='secondary'><em>Criado em {formatTimestamp(editingCategoryData?.createdAt ?? '')}</em></Typography>
+        <Divider orientation='vertical' flexItem/>
+        <Typography color='secondary'><em>Última atualização em {formatTimestamp(editingCategoryData?.updatedAt ?? '')}</em></Typography>
     </Grid>
   )
 }

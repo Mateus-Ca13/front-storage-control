@@ -1,11 +1,10 @@
-import { Autocomplete, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, InputAdornment, Typography } from '@mui/material'
+import { Autocomplete, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, InputAdornment, Typography, useTheme } from '@mui/material'
 import { EditingTextField } from '../../../../shared/components/TextField/TextField'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {  Controller, useForm } from 'react-hook-form'
 import { AddCircleOutlineRounded } from '@mui/icons-material'
 import { BetweenFlexBox, CenterColumnBox, StartColumnBox, StartFlexBox } from '../../../../shared/components/Boxes/Boxes'
 import { useToastStore } from '../../../../shared/store/toastStore'
-import { theme } from '../../../../theme/theme'
 import { useMovementStore } from '../../stores/useMovementStore'
 import { addProductToMovementSchema, type AddProductToMovementSchema, movementSchema, type MovementSchema } from '../../../../schemas/MovementSchema'
 import { createMovementApi } from '../../api/movementsApi'
@@ -16,19 +15,29 @@ import ImportNfeTab from './ImportNfeTab/ImportNfeTab'
 import { useProductsQuery } from '../../../products/hooks/useProductsQuery'
 import type { iProductColumnConfig } from '../../../../shared/types/product'
 import DialogProductsList from '../DialogProductsList/DialogProductsList'
-import { useAuthStore } from '../../../auth/stores/useAuthStore'
-import { formatCurrency } from '../../../../shared/utils/formatters'
+import { formatCurrency, formatStockStatus } from '../../../../shared/utils/formatters'
+import { TwoColorsChip } from '../../../../shared/components/Chips/Chips'
+import { useConfirmActionDialogStore } from '../../../../shared/store/confirmActionDialogStore'
 
 
 export default function CreateEntryDialog() {
-
-    const userCreator = useAuthStore(state => state.user)
+  
+    const theme = useTheme()
     const renderToast = useToastStore(state => state.renderToast)
+    const renderConfirmActionDialog = useConfirmActionDialogStore(state => state.renderConfirmActionDialog)
+    const closeConfirmActionDialog = useConfirmActionDialogStore(state => state.handleClose)
     const isCreateModalOpen = useMovementStore(state => state.isEntryModalOpen)
     const closeCreateModal = useMovementStore(state => state.closeEntryModal)
     const [productSearch, setProductSearch] = useState('')
     const [searchedProducts, setSearchedProducts] = useState<iProductColumnConfig[]>([])
     const [productsAddedToMovement, setProductsAddedToMovement] = useState<AddProductToMovementSchema[]>([])
+
+    const handleCloseDialog = () => {
+      closeCreateModal()
+      setProductsAddedToMovement([])
+      movementResetForm({}, { keepValues: true });
+      productResetForm({}, { keepValues: true });
+    }
 
     const {register: registerMovement, 
       control: controlMovement, 
@@ -43,7 +52,6 @@ export default function CreateEntryDialog() {
       originStockId: null,
       observations: '',
       products: [],
-      userCreatorId:  1
       }
     })
 
@@ -101,19 +109,34 @@ export default function CreateEntryDialog() {
 
   
     const handleMovementSubmit = async (movementData: MovementSchema) => {
-        console.log(movementData)
-        const returnedData = await createMovementApi(movementData);
-        if (returnedData.success){
-            renderToast({message: 'Entrada registrada com sucesso!', type: 'success', })
-            console.log('Entrada registrada com sucesso!', returnedData.data)
-            closeCreateModal()
-        }else{
-            renderToast({message: returnedData.message || 'Erro ao registrar entrada', type: 'error', })
-        }
-    }
+
+      renderConfirmActionDialog({
+        title: "Confirmar entrada de produtos?",
+        message: "Você está prestes a registrar uma entrada de produtos. Deseja continuar?",
+        confirmAction: {
+            label: "Registrar",
+            onClick: async () => {
+              const returnedData = await createMovementApi(movementData);
+              if (returnedData.success){
+                  renderToast({message: 'Entrada registrada com sucesso!', type: 'success', })
+                  console.log('Entrada registrada com sucesso!', returnedData.data)
+                  handleCloseDialog()
+              }else{
+                  renderToast({message: returnedData.message || 'Erro ao registrar entrada', type: 'error', })
+              }
+            closeConfirmActionDialog()
+          }},
+          cancelAction: {
+            label: "Cancelar",
+            onClick: () => {
+              closeConfirmActionDialog()
+            }
+          }
+        })
+        
+      }
 
     const handleAddProductToMovementSubmit = async (movementData: AddProductToMovementSchema) => {
-        console.log(movementData)
         const productAlreadyAdded = productsAddedToMovement.find(p => p.product.id === movementData.product.id)
         if (productAlreadyAdded) {
             renderToast({message: 'Este produto já foi adicionado à movimentação.', type: 'warning', })
@@ -133,7 +156,7 @@ export default function CreateEntryDialog() {
       maxWidth='lg'
       fullWidth
       open={isCreateModalOpen}
-      onClose={closeCreateModal}
+      onClose={handleCloseDialog}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
       >
@@ -157,10 +180,22 @@ export default function CreateEntryDialog() {
                   control={controlMovement}
                   render={({ field }) => (
                   <Autocomplete
-                  noOptionsText="Nenhum estoque encontrado."
-                  
+                    noOptionsText="Nenhum estoque encontrado."
                     fullWidth
-                    options={stocks.map((s)=>({label: s.name, value: s.id}))}
+                    options={stocks.map((s)=>({label: s.name, value: s.id, status: s.status}))}
+                    renderOption={(props, option) => (
+                      <li {...props}>
+                        <StartFlexBox gap={1} alignItems="center">
+                          <Typography>{option.label}</Typography>
+                          <TwoColorsChip 
+                          sx={{ml: 2}}
+                          size='small'
+                          label={formatStockStatus(option.status)}
+                          colorPreset={option.status === 'ACTIVE' ? 'success' : option.status === 'INACTIVE' ? 'error' : 'warning'}
+                          />
+                        </StartFlexBox>
+                      </li>
+                    )}
                     getOptionLabel={(option) => option.label}
                     isOptionEqualToValue={(opt, val) => opt.value === val.value}
                     onChange={(_, value) => field.onChange(value?.value)} // valor real
@@ -301,7 +336,7 @@ export default function CreateEntryDialog() {
           )}
         </DialogContent>
         <DialogActions sx={{padding: 2}}>
-          <Button onClick={closeCreateModal} sx={{px: 4, py: 1}} variant='outlined'>Cancelar</Button>
+          <Button onClick={handleCloseDialog} sx={{px: 4, py: 1}} variant='outlined'>Cancelar</Button>
           <Button onClick={handleSubmitMovement(handleMovementSubmit)} sx={{px: 4, py: 1}} variant='contained'>Registrar Entrada</Button>
         </DialogActions>
       </Dialog>

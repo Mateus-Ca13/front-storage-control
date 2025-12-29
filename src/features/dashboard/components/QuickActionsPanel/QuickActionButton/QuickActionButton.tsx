@@ -1,11 +1,7 @@
 
-import { theme } from '../../../../../theme/theme'
-import { Box, Button, styled, Typography } from '@mui/material'
+import { Box, Button, styled, Typography, useTheme } from '@mui/material'
 import type { QuickActionButtonProps } from '../../../types/QuickActionButton'
-
-
-
-export const StyledQuickActionButton = styled(Button)({
+export const StyledQuickActionButton = styled(Button)(({ theme }) =>({
     padding: 16,
     color: theme.palette.common.black,
     display: "flex",
@@ -16,17 +12,17 @@ export const StyledQuickActionButton = styled(Button)({
     height: "100%", 
     textTransform: "none",
     "& .MuiSvgIcon-root": { transition: "0.6s" },
-})
+}))
 
 export default function QuickActionButton( quickAction : QuickActionButtonProps) {
 
-
+    const theme = useTheme()
     return (
         <StyledQuickActionButton onClick={quickAction.action} 
         sx={{
             border: `1px solid ${quickAction.color.main}`,
             ":hover": {
-                bgcolor: quickAction.color.light,
+                bgcolor: theme.palette.mode === "light" ?quickAction.color.light : quickAction.color.dark,
                 "& .MuiSvgIcon-root": {
                 transform: "scale(1.1)"
                 },

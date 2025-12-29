@@ -1,19 +1,22 @@
 import { use, useEffect, useState } from "react"
 import { useConfirmActionDialogStore } from "../../../../shared/store/confirmActionDialogStore"
 import { useToastStore } from "../../../../shared/store/toastStore"
-import { UserRoleTuple, type iUser, type UserRoleType } from "../../../auth/types/user"
+import { UserRoleTuple, type iUser, type UserRoleType } from "../../../../shared/types/user"
 import { userSchema, type UserSchema } from "../../../../schemas/userSchema"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { updateUserApi } from "../../api/usersApi"
-import { Button, FormControl, Grid, InputLabel, MenuItem, Typography } from "@mui/material"
-import { StartColumnBox, StartFlexBox } from "../../../../shared/components/Boxes/Boxes"
+import { deleteUserApi, updateUserApi } from "../../api/usersApi"
+import { Button, Divider, FormControl, Grid, InputLabel, MenuItem, Typography } from "@mui/material"
+import { CenterFlexBox, StartColumnBox, StartFlexBox } from "../../../../shared/components/Boxes/Boxes"
 import EditStateButton from "../../../../shared/components/EditStateButton/EditStateButton"
 import { EditingTextField } from "../../../../shared/components/TextField/TextField"
 import { EditingSelect } from "../../../../shared/components/EditingSelect/EditingSelect"
-import { LockOutlined, PeopleAlt } from "@mui/icons-material"
-import { formatUserRole } from "../../../../shared/utils/formatters"
+import { InfoOutlineRounded, LockOutlined, PeopleAlt } from "@mui/icons-material"
+import { formatTimestamp, formatUserRole } from "../../../../shared/utils/formatters"
 import { useUserStore } from "../../stores/useUserStore"
+import { LightTooltip } from "../../../../shared/components/Tooltip/Tooltip"
+import DeleteEntityButton from "../../../../shared/components/DeleteEntityButton/DeleteEntityButton"
+import { useNavigate } from "react-router-dom"
 
 type UserEditFormProps = {
     user: iUser | null    
@@ -22,6 +25,7 @@ type UserEditFormProps = {
 
 export default function UserEditForm({user}: UserEditFormProps) {
 
+    const navigate = useNavigate()
     const renderConfirmActionDialog = useConfirmActionDialogStore(state => state.renderConfirmActionDialog) 
     const closeConfirmActionDialog = useConfirmActionDialogStore(state => state.handleClose)
     const openChangePasswordDialog = useUserStore(state => state.openChangePasswordDialog)
@@ -73,6 +77,34 @@ export default function UserEditForm({user}: UserEditFormProps) {
         setEditingUserData({...editingUserData!, [prop]: value}) 
     }
 
+    const handleDeleteUser = async (userId: number) => {
+        renderConfirmActionDialog({
+        title: 'Excluir usuário?',
+        message: 'Você tem certeza que deseja excluir este usuário? Essa ação não pode ser desfeita.',
+        confirmAction: {label: 'Excluir', onClick: async () => {
+            const returnedData = await deleteUserApi(userId)
+
+            if(returnedData?.success) {
+                closeConfirmActionDialog()
+                renderToast({
+                    type: 'success',
+                    message: 'Usuário excluído com sucesso!'
+                })
+                navigate(-1)
+            } else {
+                closeConfirmActionDialog()
+                renderToast({
+                    type: 'error',
+                    message: returnedData?.message?? 'Erro ao excluir usuário!'
+                })
+            };
+        }},
+        cancelAction: {label: 'Cancelar', onClick: () => {
+            closeConfirmActionDialog()
+        }}
+    })
+    }
+
 
   return (
     <Grid component={'form'} onSubmit={handleSubmit(handleOnSubmit)} container spacing={2} mb={2}>
@@ -88,7 +120,14 @@ export default function UserEditForm({user}: UserEditFormProps) {
                 </StartColumnBox>
                 </StartFlexBox>
             </Grid>
-            <Grid container gap={2} size={{xl: onEditing? 6 : 3, lg: onEditing? 6 : 3, md: onEditing? 6 : 3, sm: 12, xs: 12}}>
+            <Grid container gap={2} size={{xl: 6, lg: 6, md:6, sm: 12, xs: 12}}>
+                {!onEditing && <Grid size={{xl: 6, lg: 6, md: 6, sm: 12, xs: 12}}>
+                    <DeleteEntityButton
+                    entityLabel='usuário'
+                    onClick={() => handleDeleteUser(user!.id)}
+                    />
+                </Grid>
+                }
                 <EditStateButton
                 state={onEditing} 
                 setState={setOnEditing} 
@@ -142,11 +181,15 @@ export default function UserEditForm({user}: UserEditFormProps) {
         </Grid>
         <Grid size={{lg: 4, md: 4, sm: 12, xs: 12}}>
             <FormControl fullWidth>
-                <InputLabel shrink id="select-role">Função</InputLabel>
+                <InputLabel shrink id="select-role">
+                    <LightTooltip title='A função de um usuário define o escopo de ações que ele poderá realizar.'>
+                    <CenterFlexBox gap={1}>Função <InfoOutlineRounded fontSize='small'/></CenterFlexBox>
+                    </LightTooltip>
+                    </InputLabel>
                 <EditingSelect
                 fullWidth
                 variant='outlined' 
-                label="Função" 
+                label="Função ..." 
                 displayEmpty
                 defaultValue=""
                 sx={{"& .MuiInputBase-input.Mui-disabled": {WebkitTextFillColor: 'currentcolor'}}}
@@ -194,6 +237,9 @@ export default function UserEditForm({user}: UserEditFormProps) {
                 <LockOutlined fontSize="small"/>
             </Button>
         </Grid>
+        <Typography color='secondary'><em>Criado em {formatTimestamp(editingUserData?.createdAt ?? '')}</em></Typography>
+        <Divider orientation='vertical' flexItem/>
+        <Typography color='secondary'><em>Última atualização em {formatTimestamp(editingUserData?.updatedAt ?? '')}</em></Typography>
     </Grid>
   )
 }

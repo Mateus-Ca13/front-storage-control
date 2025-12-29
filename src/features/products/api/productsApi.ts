@@ -1,6 +1,6 @@
 import type { AxiosError } from "axios"
 import api from "../../../config/api"
-import type { iProduct, iProductColumnConfig } from "../../../shared/types/product"
+import type { iProduct, iProductColumnConfig, iProductsImportCsvReturn } from "../../../shared/types/product"
 import type { iResponse } from "../../../shared/types/response"
 import type { ProductSchema } from "../../../schemas/productSchema"
 
@@ -24,6 +24,22 @@ export const getProductById = async (id: number): Promise<iResponse<iProduct>> =
         
     } catch (error: AxiosError | any) {
         return {...error.response.data, data: {}} as iResponse<iProduct>
+    }
+}
+
+export const getProductsCsvConvertToJson = async (file: File): Promise<iResponse<iProductsImportCsvReturn[]>> => {
+    try {
+        const formData = new FormData();
+        formData.append('file', file);
+        const response  = await api.post("products/import-csv", formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        }).then(res => res.data)
+        return response as iResponse<iProductsImportCsvReturn[]>
+        
+    } catch (error: AxiosError | any) {
+        return {...error.response.data, data: ""} as iResponse<iProductsImportCsvReturn[]>
     }
 }
 
@@ -54,6 +70,16 @@ export const createProductApi = async (data: ProductSchema): Promise<iResponse<i
         
     } catch (error: AxiosError | any) { 
         return {...error.response.data, data: {}} as iResponse<iProduct>
+    }
+}
+
+export const createProductsListApi = async (data: ProductSchema[]): Promise<iResponse<iProduct[]>> => {
+    try {
+        const response  = await api.post(`products/list`, data).then(res => res.data)
+        return response as iResponse<iProduct[]>
+        
+    } catch (error: AxiosError | any) { 
+        return {...error.response.data, data: []} as iResponse<iProduct[]>
     }
 }
 

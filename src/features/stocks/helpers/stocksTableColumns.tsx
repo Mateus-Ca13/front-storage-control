@@ -25,7 +25,7 @@ export const stocksTableColumns: ColumnConfig<iStockColumnConfig>[] = [
             header: 'Tipo',
             align: 'center',
             minWidth: 30,
-            format: (value) => <Typography fontSize={14} color={value === 'CENTRAL' ? 'info' : 'success.dark'}>{value ? formatStockType(value as StockType) : '—'}</Typography>
+            format: (value) => <Typography fontSize={14} color={value === 'CENTRAL' ? 'info' : 'success'}>{value ? formatStockType(value as StockType) : '—'}</Typography>
         },
         { 
             key: 'stockedQuantities', 

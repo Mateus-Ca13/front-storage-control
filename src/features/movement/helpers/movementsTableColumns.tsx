@@ -38,7 +38,7 @@ export const movementsTableColumns: ColumnConfig<iMovementColumnConfig>[] = [
             format: (value, movement ) => (<CenterFlexBox gap={1}>
                 <Typography color="error" variant="body2">{formatStringToMaxLength(movement?.originStock?.name, 50)?? ''}</Typography>
                 < ArrowForwardRounded fontSize="small"/>
-                <Typography color="success.dark" variant="body2">{formatStringToMaxLength(movement?.destinationStock?.name, 50)?? ''}</Typography></CenterFlexBox>)
+                <Typography color="success" variant="body2">{formatStringToMaxLength(movement?.destinationStock?.name, 50)?? ''}</Typography></CenterFlexBox>)
         },
         { 
             key: 'totalProducts', 

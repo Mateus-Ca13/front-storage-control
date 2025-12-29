@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { SidebarItem } from '../../../types/sidebarListItems';
 import { Collapse, List, ListItem, ListItemButton, ListItemIcon, ListItemText, styled } from '@mui/material';
 import { ExpandMore } from '@mui/icons-material';
@@ -47,7 +47,12 @@ export default function SidebarListItem({ listItem, index, isSidebarOpen }: Side
 
     const [expanded, setExpanded] = useState<{ [key: number]: boolean }>({});
 
-            
+    
+    useEffect(() => {
+        setExpanded(prev => ({ ...prev, [index]: false }));
+        
+    }, [isSidebarOpen]);
+
     function handleAccordionClick(key: number) {
         setExpanded(prev => ({ ...prev, [key]: !prev[key] }));
     }

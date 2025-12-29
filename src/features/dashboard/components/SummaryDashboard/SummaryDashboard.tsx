@@ -1,15 +1,15 @@
-import { Grid } from '@mui/material'
+import { Grid, useTheme } from '@mui/material'
 import { CardLayout } from '../../../../shared/components/Cards/Cards'
 import SummaryCard from '../SummaryCard/SummaryCard'
 import { CategoryRounded, SyncAltOutlined, WarehouseRounded, WarningRounded } from '@mui/icons-material'
-import { theme } from '../../../../theme/theme'
 import { useEffect, useState } from 'react'
 import { MainSummaryApi } from '../../api/dashboardApi'
 import type { AsyncResponseDataProps } from '../../../../shared/types/response'
 
 type summaryDataProps = AsyncResponseDataProps<typeof MainSummaryApi>
 export default function SummaryDashboard() {
-
+  
+    const theme = useTheme()
     const [summaryData, setSummaryData] = useState<summaryDataProps['data']>({
       productsBelowMinStock: {value: 0, metrics: ''},
       totalMovementsLastWeek: {value: 0, metrics: ''},

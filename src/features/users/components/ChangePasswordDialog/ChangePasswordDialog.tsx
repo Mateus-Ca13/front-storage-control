@@ -7,9 +7,9 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { passwordSchema, userSchema, type PasswordSchema, type UserSchema } from '../../../../schemas/userSchema'
 import { useForm } from 'react-hook-form'
 import { useToastStore } from '../../../../shared/store/toastStore'
-import type { iUser } from '../../../auth/types/user'
 import { updateUserPasswordApi } from '../../api/usersApi'
 import { StartColumnBox, StartFlexBox } from '../../../../shared/components/Boxes/Boxes'
+import type { iUser } from '../../../../shared/types/user'
 
 type UserEditFormProps = {
     user: iUser | null    
@@ -26,7 +26,7 @@ export default function ChangePasswordDialog({ user }: UserEditFormProps) {
     const [passwordData, setPasswordData] = useState<PasswordSchema | null>(null)
     const [editingUserData, setEditingUserData] = useState<iUser | null>(null)
 
-    const {register, handleSubmit, formState: { errors, isSubmitting }, setError} = useForm<PasswordSchema>({
+    const {register, handleSubmit, formState: { errors, isSubmitting }, setError, reset: resetForm} = useForm<PasswordSchema>({
             resolver: zodResolver(passwordSchema),
         });
 
@@ -39,7 +39,8 @@ export default function ChangePasswordDialog({ user }: UserEditFormProps) {
             setPasswordData({currentPassword: '', newPassword: ''})
             console.log('Senha alterada com sucesso!', returnedData.data)
         }else{
-            if (returnedData.message = 'Senha atual inválida.') {
+            if (returnedData.message === 'Senha atual inválida.') {
+                debugger
                 setError( 'currentPassword', {message: returnedData.message || 'Erro ao alterar senha.'})
             }else {
                 setError( 'root', {message: returnedData.message || 'Erro ao alterar senha.'})
@@ -48,15 +49,21 @@ export default function ChangePasswordDialog({ user }: UserEditFormProps) {
         }
     }
 
+    const handleClose = () => {
+        closeChangePasswordDialog()
+        setPasswordData({currentPassword: '', newPassword: ''})
+        resetForm()
+    }
+
+
     useEffect(() => {
         setEditingUserData(user)
     }, [user])
 
   return (
     open &&
-
         <Dialog
-        open={open} onClose={closeChangePasswordDialog}
+        open={open} onClose={handleClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
         >
@@ -119,7 +126,7 @@ export default function ChangePasswordDialog({ user }: UserEditFormProps) {
             </DialogContentText>
             </DialogContent>
             <DialogActions>
-            <Button onClick={closeChangePasswordDialog} variant='text'>Cancelar</Button>
+            <Button onClick={handleClose} variant='text'>Cancelar</Button>
             <Button onClick={handleSubmit(handleOnSubmit)} variant='text'>Alterar senha</Button>
             </DialogActions>
         </Dialog>

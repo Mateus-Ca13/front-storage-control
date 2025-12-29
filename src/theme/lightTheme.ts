@@ -1,4 +1,4 @@
-import { createTheme, darken, lighten } from "@mui/material";
+import { darken, lighten, type ThemeOptions } from "@mui/material";
 
 
 type OwnPalleteColor = {
@@ -16,8 +16,9 @@ declare module "@mui/material/styles" {
   }
 }
 
-export const theme = createTheme({
+export const lightTheme: ThemeOptions = {
   palette: {
+    mode: "light",
     primary: {
       dark: "#3a2417ff",
       main: "#523320",
@@ -29,26 +30,23 @@ export const theme = createTheme({
       light: "#f1e6ddff",
     },
     background: {
-      default: "#F5F5F5",
-
+        default: "#f0f0f0ff",
     },
     common: {
         black: "#161616ff",
         white: "#fff",
     },
     warning: {
-      
         main: "#ff9800",
         light: lighten('#ff9800', 0.9),
         dark: darken('#ff9900ff', 0.2),
     },
     error: {
-        main: "#f44336",
-        light: lighten('#f44336', 0.9),
-        dark: darken('#f44336', 0.2),
+        main: "#d83125ff",
+        light: lighten('#d83125ff', 0.9),
+        dark: darken('#d83125ff', 0.2),
     },
     info: {
-        
         main: "#3f51b5",
         light: lighten('#3f51b5', 0.9),
         dark: darken('#3f51b5', 0.2),
@@ -89,4 +87,4 @@ export const theme = createTheme({
     borderRadius: 8,
   },
 
-});
+};

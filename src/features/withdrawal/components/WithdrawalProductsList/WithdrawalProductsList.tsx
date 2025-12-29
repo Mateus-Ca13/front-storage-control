@@ -1,12 +1,11 @@
 import React from 'react'
 import type { AddProductToMovementSchema } from '../../../../schemas/MovementSchema'
 import { EndFlexBox, StartColumnBox } from '../../../../shared/components/Boxes/Boxes'
-import { Divider, Typography } from '@mui/material'
+import { Divider, Typography, useTheme } from '@mui/material'
 import { formatPrice } from '../../../../shared/utils/formatters'
 import ListingTable from '../../../../shared/components/ListingTable/ListingTable'
 import { withdrawalProductMovementsTableColumns } from '../../../products/helpers/productsTableColumns'
 import type { iProductAddedToMovementColumnConfig } from '../../../../shared/types/product'
-import { theme } from '../../../../theme/theme'
 
 type WithdrawalProductsListProps = {
     products: AddProductToMovementSchema[]
@@ -15,6 +14,8 @@ type WithdrawalProductsListProps = {
 }
 
 export default function WithdrawalProductsList({ products, setProducts, errorMessage }: WithdrawalProductsListProps) {
+
+    const theme = useTheme()
   return (
         <StartColumnBox sx={{width: '100%'}}>
 

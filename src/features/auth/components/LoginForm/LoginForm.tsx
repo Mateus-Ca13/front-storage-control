@@ -7,9 +7,11 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useState } from "react";
 import { loginUserApi } from "../../api/authApi";
 import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../../stores/useAuthStore";
 
 export default function LoginForm() {
     const navigate = useNavigate();
+    const setUserInfo = useAuthStore(state => state.setUserInfo);
     const [showPassword, setShowPassword] = useState<boolean>(false);
 
     const {register, handleSubmit, formState: { errors, isSubmitting }, setError} = useForm<LoginSchema>({
@@ -19,7 +21,12 @@ export default function LoginForm() {
     const handleOnSubmit = async (data: LoginSchema) => {
         let returnedData = await loginUserApi(data.username, data.password);
 
-        if (returnedData.success) navigate("/dashboard")
+        if (returnedData.success && returnedData.data) {
+          navigate("/dashboard", { replace: true })
+          debugger
+          setUserInfo(returnedData.data);
+        return;
+        }
           setError("root", { type: "manual", message: returnedData.message });
     }
 
@@ -43,7 +50,7 @@ export default function LoginForm() {
         onSubmit={handleSubmit(handleOnSubmit)}>
             <TextField
             fullWidth 
-            label="Usuário ou E-mail" 
+            label="E-mail ou usuário" 
             {...register("username")} 
             error={!!errors.username}
             helperText={errors.username?.message}

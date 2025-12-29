@@ -6,15 +6,17 @@ type ToastStoreProps = {
     type: 'success' | 'error' | 'info' | 'warning';
     message: string;
     action?: React.ReactNode;
-    renderToast: (toast: Omit<ToastStoreProps, 'renderToast' | 'closeToast' | 'open'>) => void;
+    renderToast: (toast: Omit<ToastStoreProps, 'renderToast' | 'closeToast' | 'open' | 'toastId'>) => void;
     closeToast: () => void;
+    toastId: Date
 }
 
 export const useToastStore = create<ToastStoreProps>((set) => ({
     open: false,
     type: 'error',
-    message: 'Testando toast',
+    message: '',
     action: undefined,
-    renderToast: (toast: Omit<ToastStoreProps, 'renderToast' | 'closeToast' | 'open'>) => set(() => ({...toast, open: true})),
+    renderToast: (toast: Omit<ToastStoreProps, 'renderToast' | 'closeToast' | 'open' | 'toastId'>) => set(() => ({...toast, open: true, toastId: new Date()})),
     closeToast: () => set(() => ({open: false})),
+    toastId: new Date()
 }));
