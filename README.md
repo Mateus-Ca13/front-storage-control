@@ -11,6 +11,9 @@ O projeto está estruturado para suportar as seguintes funcionalidades:
 -   **Gerenciamento de Produtos:** Cadastro, edição e visualização de produtos.
 -   **Gerenciamento de Estoque:** Controle de entrada e saída de itens.
 -   **Gerenciamento de Usuários:** Administração de usuários do sistema.
+-   **Gerenciamento de Categorias:** Classificação de itens.
+-   **Gerenciamento de Movimentações:** Registro de movimentações de itens.
+-   **Configurações:** Ajustes gerais do sistema.
 
 ## 🚀 Tecnologias Utilizadas
 
@@ -75,9 +78,17 @@ src/
 ├── assets/         # Imagens, ícones e outros arquivos estáticos
 ├── config/         # Configurações globais (ex: instância do Axios)
 ├── features/       # Módulos da aplicação (auth, products, etc.)
-│   ├── auth/
+│   ├── example/
+│   │   ├── components/     # Componentes específicos do módulo
+│   │   ├── hooks/          # Hooks específicos do módulo
+│   │   ├── pages/          # Páginas específicas do módulo
+│   │   ├── api/            # Chamadas de API específicas do módulo
+│   │   ├── stores/         # Estado global (Zustand, Context API, etc.)
+│   │   ├── helpers/        # Funções auxiliares específicas do módulo
+│   │   └── types/          # Tipos específicos do módulo
 │   └── ...
 ├── routes/         # Configuração de rotas da aplicação
+├── lib/            # Utilitários e bibliotecas de terceiros
 ├── schemas/        # Esquemas de validação (Zod)
 ├── shared/         # Componentes, hooks e layouts reutilizáveis
 ├── theme/          # Configuração de tema do Material-UI

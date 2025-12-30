@@ -201,7 +201,6 @@ export default function SelectStocksSection({formStepSetter, formValueGetter, fo
         </CenterFlexBox>
 
         <EndFlexBox  gap={2} sx={{width: '100%'}}>
-            <Button onClick={()=>console.log(formValueGetter())}>LOG</Button>
             <Button onClick={()=>formStepSetter('operationType')} variant='outlined' sx={{ fontSize: 22, textTransform: 'none', py: 2, px: 8}}>
                 <Typography variant='h6'>Voltar<strong> [ESC]</strong></Typography>
             </Button>
