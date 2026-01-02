@@ -1,8 +1,8 @@
-import type { Category } from "../../../shared/types/category";
+import type { iCategory } from "../../../shared/types/category";
 
 export type BelowStockSummaryProps = {
     productId: string;
-    category: Category;
+    category: iCategory;
     productName: string;
     stockQuantity: number;
     minStockRecomended: number;
