@@ -20,11 +20,11 @@ export default function LoginPage() {
           width: '60%',
           height: '100%',
           
-          backgroundImage: 'url("./src/assets/login_bg.png")',
+          backgroundImage: 'url("/images/login_bg.png")',
         }}
         >
           <img
-            src="./src/assets/icon.png"
+            src="/images//icon.png"
             alt="Logo"
             width={300}
             style={{ borderRadius: '1em', marginBottom: '1em' }}
