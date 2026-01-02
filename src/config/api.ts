@@ -2,10 +2,9 @@ import axios from 'axios';
 import { navigate } from '../shared/components/RouterNavigator/RouterNavigator';
 import { refreshTokenApi } from '../features/auth/api/authApi';
 import { useAuthStore } from '../features/auth/stores/useAuthStore';
-import { replace } from 'react-router-dom';
 
 const api = axios.create({
-    baseURL: 'http://localhost:8000/api/v1',
+    baseURL: import.meta.env.VITE_API_URL,
     timeout: 10000,
     headers: {
         'Content-Type': 'application/json',
