@@ -66,7 +66,7 @@ export default function MovementViewPage() {
                         </CenterFlexBox>
                         <Divider sx={{height: 16, backgroundColor: 'grey.400'}} orientation='vertical' />
                         <CenterFlexBox>
-                          <Typography variant='body1'>Valor total de produtos: R$ <strong>{formatPrice(movement?.products.reduce((acc, curr) => acc + (curr.pricePerUnit * curr.quantity), 0)?? 0)}</strong></Typography>
+                          <Typography variant='body1'>Valor total de produtos:  <strong>R$ {formatPrice(movement?.products.reduce((acc, curr) => acc + (curr.pricePerUnit * curr.quantity), 0)?? 0)}</strong></Typography>
                         </CenterFlexBox>
                     </EndFlexBox>
                     

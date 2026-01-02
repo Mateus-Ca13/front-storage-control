@@ -27,6 +27,7 @@ import { darkTheme } from "../theme/darkTheme"
 import { lightTheme } from "../theme/lightTheme"
 import HelpPage from "../features/help/pages/HelpPage"
 import { queryClient } from "../lib/reactQueryClient"
+import { PrivateRoute, PublicRoute } from "./RoutesGuard"
 
 function AppRoutes() {
 
@@ -59,14 +60,18 @@ function AppRoutes() {
           <RouterNavigator/>
           <Routes>
             <Route path="/" element={<AppUtilityWrapper/>}>
+            <Route element={<PublicRoute/>}>
                 <Route path="/" element={<Navigate to={'/login'}/>} />
                 <Route path="/login" element={<LoginPage/>} />
+                <Route path="*" element={<NotFoundPage/>}/>
+              </Route>
+              <Route element={<PrivateRoute/>}>
                 <Route path="/dashboard" element={<DashboardLayout/>}>
                     <Route path="" element={<MainDashboard/>} />
                     <Route path="products" element={<ProductsPage/>} />
                     <Route path="products/:id" element={<ProductViewPage/>} />
                     <Route path="categories" element={<CategoriesPage/>} />
-                    <Route path="categories/:id" element={<CategoryViewPage/>} />
+                    <Route path="categories/:id" element={<CategoryViewPage/>} />n
                     <Route path="stocks" element={<StocksPage/>} />
                     <Route path="stocks/:id" element={<StockViewPage/>} />
                     <Route path="movements" element={<MovementsPage/>} />
@@ -76,12 +81,10 @@ function AppRoutes() {
                     <Route path="users/:id" element={<UserViewPage/>} />
                     <Route path="help" element={<HelpPage/>}/>
                     <Route path="settings" element={<SettingsPage/>} />
-                    <Route path="*" element={<NotFoundedWarning/>}/>
-
-                  
-                    
+                    <Route path="*" element={<NotFoundedWarning/>}/>  
                 </Route>
-                <Route path="*" element={<NotFoundPage/>}/>
+              </Route>
+                
             </Route>
           </Routes>
         </BrowserRouter>
