@@ -1,4 +1,4 @@
-import { Divider, Drawer, List, styled, Typography, useTheme, type DrawerProps } from "@mui/material";
+import { Divider, Drawer, List, styled, Typography, type DrawerProps } from "@mui/material";
 import { useState } from "react";
 import type { SidebarItem } from "../../types/sidebarListItems";
 import { AccountCircle, ControlPointRounded, 
@@ -40,7 +40,6 @@ const SidebarDrawer =  styled(Drawer)<DrawerProps>({
 
 export default function DashboardSidebar() {
 
-    const theme = useTheme()
     const [open, setOpen] = useState<boolean>(false);
     const userInfo = useAuthStore(state => state.user)
     const navigate = useNavigate();

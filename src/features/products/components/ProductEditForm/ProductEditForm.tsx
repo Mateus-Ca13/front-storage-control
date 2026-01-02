@@ -32,10 +32,10 @@ export default function ProductEditForm({ product } : ProductEditFormProps) {
     const closeConfirmActionDialog = useConfirmActionDialogStore(state => state.handleClose)
     const renderToast = useToastStore(state => state.renderToast)
     const [editingProductData, setEditingProductData] = useState<iProduct | null>(null)
-    const {data, error, isLoading } = useCategoryQuery(0, 100, '', {})
+    const {data } = useCategoryQuery(0, 100, '', {})
     const [onEditing, setOnEditing] = useState<boolean>(false)
     const [categories, setCategories] = useState<iCategoryColumnConfig[]>([])
-    const {register, handleSubmit, formState: { errors, isSubmitting }, setError} = useForm<ProductSchema>({
+    const {register, handleSubmit, formState: { errors}} = useForm<ProductSchema>({
             resolver: zodResolver(productSchema),
         });
 

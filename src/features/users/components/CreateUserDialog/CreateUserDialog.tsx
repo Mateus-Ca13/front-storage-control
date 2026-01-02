@@ -20,7 +20,7 @@ export default function CreateUserDialog() {
   const renderToast = useToastStore(state => state.renderToast)
   const isCreateModalOpen = useUserStore(state => state.isCreateModalOpen)
   const closeCreateModal = useUserStore(state => state.closeCreateModal)
-  const {register, control, handleSubmit, formState: { errors, isSubmitting }, setError, reset: resetForm, resetField} = useForm<CreateUserDTO>({
+  const {register, handleSubmit, formState: { errors }, reset: resetForm} = useForm<CreateUserDTO>({
           resolver: zodResolver(createUserDTO),
           defaultValues: {
 

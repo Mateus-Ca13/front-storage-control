@@ -1,5 +1,4 @@
 import { Grid, Typography } from '@mui/material'
-import React from 'react'
 import { CardLayout } from '../../../shared/components/Cards/Cards'
 import { StartColumnBox, StartFlexBox } from '../../../shared/components/Boxes/Boxes'
 import { Help } from '@mui/icons-material'

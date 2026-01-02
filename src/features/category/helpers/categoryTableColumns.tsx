@@ -37,6 +37,6 @@ export const categoryTableColumns: ColumnConfig<iCategoryColumnConfig>[] = [
             key: 'actions', 
             header: 'Ações', 
             align: 'center', 
-            format: (value, category) => <TableActionsMenu id={category?.id ?? -1} actions={categoryMenuActions}/>
+            format: (_value, category) => <TableActionsMenu id={category?.id ?? -1} actions={categoryMenuActions}/>
         }
     ]

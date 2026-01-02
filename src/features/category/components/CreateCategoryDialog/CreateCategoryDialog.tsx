@@ -1,4 +1,4 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormHelperText, Grid, InputAdornment, InputLabel, MenuItem, Typography, useTheme } from '@mui/material'
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormHelperText, Grid, InputLabel, MenuItem, Typography, useTheme } from '@mui/material'
 import { EditingTextField } from '../../../../shared/components/TextField/TextField'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {  useForm } from 'react-hook-form'
@@ -17,7 +17,7 @@ export default function CreateCategoryDialog() {
   const renderToast = useToastStore(state => state.renderToast)
   const isCreateModalOpen = useCategoryStore(state => state.isCreateModalOpen)
   const closeCreateModal = useCategoryStore(state => state.closeCreateModal)
-  const {register, control, handleSubmit, formState: { errors, isSubmitting }, setError, reset: resetForm} = useForm<CategorySchema>({
+  const {register, handleSubmit, formState: { errors }, reset: resetForm} = useForm<CategorySchema>({
           resolver: zodResolver(categorySchema),
           defaultValues: {
             name: '',

@@ -2,9 +2,9 @@ import { LockOutlined, VisibilityOffRounded, VisibilityRounded } from '@mui/icon
 import { EditingTextField } from '../../../../shared/components/TextField/TextField'
 import { useUserStore } from '../../stores/useUserStore'
 import { Alert, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, InputAdornment, Typography } from '@mui/material'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { passwordSchema, userSchema, type PasswordSchema, type UserSchema } from '../../../../schemas/userSchema'
+import { passwordSchema, type PasswordSchema } from '../../../../schemas/userSchema'
 import { useForm } from 'react-hook-form'
 import { useToastStore } from '../../../../shared/store/toastStore'
 import { updateUserPasswordApi } from '../../api/usersApi'
@@ -24,9 +24,8 @@ export default function ChangePasswordDialog({ user }: UserEditFormProps) {
     const [newPasswordVisible, setNewPasswordVisible] = useState<boolean>(false)
     const [currentPasswordVisible, setCurrentPasswordVisible] = useState<boolean>(false)
     const [passwordData, setPasswordData] = useState<PasswordSchema | null>(null)
-    const [editingUserData, setEditingUserData] = useState<iUser | null>(null)
 
-    const {register, handleSubmit, formState: { errors, isSubmitting }, setError, reset: resetForm} = useForm<PasswordSchema>({
+    const {register, handleSubmit, formState: { errors }, setError, reset: resetForm} = useForm<PasswordSchema>({
             resolver: zodResolver(passwordSchema),
         });
 
@@ -45,7 +44,6 @@ export default function ChangePasswordDialog({ user }: UserEditFormProps) {
             }else {
                 setError( 'root', {message: returnedData.message || 'Erro ao alterar senha.'})
             }            
-            setEditingUserData(user)
         }
     }
 
@@ -54,11 +52,6 @@ export default function ChangePasswordDialog({ user }: UserEditFormProps) {
         setPasswordData({currentPassword: '', newPassword: ''})
         resetForm()
     }
-
-
-    useEffect(() => {
-        setEditingUserData(user)
-    }, [user])
 
   return (
     open &&

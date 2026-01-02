@@ -1,4 +1,3 @@
-import type { ZodIssue } from "zod/v3"
 import type { ProductSchema } from "../../schemas/productSchema"
 import type { iMinimizedProductMovementsColumnConfig } from "./movement"
 import type { StockType } from "./stock"

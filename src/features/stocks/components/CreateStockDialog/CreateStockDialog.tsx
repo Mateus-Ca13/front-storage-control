@@ -1,7 +1,7 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormHelperText, Grid, InputAdornment, InputLabel, MenuItem, Typography } from '@mui/material'
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormHelperText, Grid, InputLabel, MenuItem, Typography } from '@mui/material'
 import { EditingTextField } from '../../../../shared/components/TextField/TextField'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Controller, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { EditingSelect } from '../../../../shared/components/EditingSelect/EditingSelect'
 import { formatStockStatus, formatStockType } from '../../../../shared/utils/formatters'
 import { BorderColor } from '@mui/icons-material'
@@ -18,7 +18,7 @@ export default function CreateStockDialog() {
   const renderToast = useToastStore(state => state.renderToast)
   const isCreateModalOpen = useStockStore(state => state.isCreateModalOpen)
   const closeCreateModal = useStockStore(state => state.closeCreateModal)
-  const {register, control, handleSubmit, formState: { errors, isSubmitting }, setError, reset: resetForm} = useForm<StockSchema>({
+  const {register, handleSubmit, formState: { errors }, reset: resetForm} = useForm<StockSchema>({
           resolver: zodResolver(stockSchema),
           defaultValues: {
             name: '',      

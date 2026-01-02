@@ -1,4 +1,4 @@
-import { CenterColumnBox, FullScreenBoxLayout } from '../components/Boxes/Boxes'
+import { FullScreenBoxLayout } from '../components/Boxes/Boxes'
 import NotFoundedWarning from '../components/NotFoundedWarning/NotFoundedWarning'
 
 export default function NotFoundPage() {

@@ -43,7 +43,7 @@ export default function CreateEntryDialog() {
       control: controlMovement, 
       reset: movementResetForm,
       handleSubmit: handleSubmitMovement, 
-      formState: { errors: errorsMovement, isSubmitting: isSubmittingMovement }, 
+      formState: { errors: errorsMovement }, 
       setError: setErrorMovement,
       setValue: setValueMovement } = useForm<MovementSchema>({
       resolver: zodResolver(movementSchema),
@@ -60,8 +60,7 @@ export default function CreateEntryDialog() {
       reset: productResetForm,
       watch: watchAddProduct, 
       handleSubmit: handleAddProductToMovement, 
-      formState: { errors: errorsAddProduct, isSubmitting: isSubmittingAddProduct }, 
-      setError: setErrorAddProduct,
+      formState: { errors: errorsAddProduct}, 
       setValue: setValueAddProduct,
       resetField: productResetField } = useForm<AddProductToMovementSchema>({
       resolver: zodResolver(addProductToMovementSchema),
@@ -69,8 +68,8 @@ export default function CreateEntryDialog() {
     })
     
     const selectedProduct = watchAddProduct('product')
-    const {data: stocksData, isLoading: stocksLoading, error: stocksError} = useStocksQuery(0, 100, '', {orderBy: 'asc', sortBy: 'name', type: null})
-    const {data: productsData, isLoading: productsLoading, error: productsError } = useProductsQuery(0, 10, productSearch, {orderBy: 'asc', sortBy: 'name', categoriesIds: [], hasNoCodebar: false, isBelowMinStock: false})
+    const {data: stocksData } = useStocksQuery(0, 100, '', {orderBy: 'asc', sortBy: 'name', type: null})
+    const {data: productsData } = useProductsQuery(0, 10, productSearch, {orderBy: 'asc', sortBy: 'name', categoriesIds: [], hasNoCodebar: false, isBelowMinStock: false})
     const [stocks, setStocks] = useState<iStockColumnConfig[]>([])
 
     useEffect(() => { // Reset de fomrulário -  Dialog fechando
@@ -248,7 +247,7 @@ export default function CreateEntryDialog() {
                           getOptionLabel={(option) => option?.name ?? ""}
                           isOptionEqualToValue={(opt, val) => opt.id === val.id}
                           value={field.value || null || undefined}
-                          onChange={(event, selectedOption) => field.onChange(selectedOption)}
+                          onChange={(_event, selectedOption) => field.onChange(selectedOption)}
                           renderInput={(params) => (
                             <EditingTextField
                               {...params}

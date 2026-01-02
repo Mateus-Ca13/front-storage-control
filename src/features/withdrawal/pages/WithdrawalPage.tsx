@@ -1,4 +1,4 @@
-import { Button, Grid } from '@mui/material'
+import { Grid } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { CardLayout } from '../../../shared/components/Cards/Cards'
 import { CenterColumnBox, CenterFlexBox } from '../../../shared/components/Boxes/Boxes'
@@ -15,14 +15,11 @@ import { useToastStore } from '../../../shared/store/toastStore'
 export default function WithdrawalPage() {
 
   const renderToast = useToastStore(state => state.renderToast)
-  const {register: registerMovement, 
+  const { 
       control: controlMovement,
       reset: movementResetForm,
-      resetField: movementResetField,
-      watch: watchMovement,
       handleSubmit: handleSubmitMovement, 
-      formState: { errors: errorsMovement, isSubmitting: isSubmittingMovement }, 
-      setError: setErrorMovement,
+      formState: { errors: errorsMovement }, 
       trigger: triggerMovement,
       getValues: getValuesMovement,
       setValue: setValueMovement } = useForm<MovementSchema>({
@@ -85,7 +82,7 @@ export default function WithdrawalPage() {
     }
 
   useEffect(() => {
-    Object.entries(errorsMovement).forEach(([key, value]) => {
+    Object.entries(errorsMovement).forEach(([_key, value]) => {
     renderToast({message: value.message as string, type: 'error', })
   });
     

@@ -2,13 +2,12 @@ import React, { useEffect, useState } from 'react'
 import { Controller, type Control, type FieldErrors, type UseFormGetValues, type UseFormSetValue, type UseFormTrigger } from 'react-hook-form';
 import type { MovementSchema } from '../../../../schemas/MovementSchema';
 import { CenterColumnBox, CenterFlexBox, EndFlexBox, StartFlexBox } from '../../../../shared/components/Boxes/Boxes';
-import { Autocomplete, Button, Checkbox, Chip, FormControlLabel, Typography } from '@mui/material';
+import { Autocomplete, Button, Chip, Typography } from '@mui/material';
 import type { iStockColumnConfig } from '../../../../shared/types/stock';
 import { useStocksQuery } from '../../../stocks/hooks/useStocksQuery';
 import { EditingTextField } from '../../../../shared/components/TextField/TextField';
 import { useKeyboardShortcuts } from '../../../../shared/hooks/useKeyboardShortcuts';
 import { useToastStore } from '../../../../shared/store/toastStore';
-import { ArrowDownwardRounded, ArrowRightAltRounded } from '@mui/icons-material';
 import { TwoColorsChip } from '../../../../shared/components/Chips/Chips';
 import { formatStockStatus } from '../../../../shared/utils/formatters';
 import { useSettingsStore } from '../../../settings/stores/SettingsStore';
@@ -28,7 +27,7 @@ export default function SelectStocksSection({formStepSetter, formValueGetter, fo
     const defaultOriginStockId = useSettingsStore((state) => state.defaultOriginStockId)
     const renderToast = useToastStore(state => state.renderToast)
     const [stocks, setStocks] = useState<iStockColumnConfig[]>([])
-    const {data: stocksData, isLoading: stocksLoading, error: stocksError} = useStocksQuery(0, 100, '', {orderBy: 'asc', sortBy: 'name', type: null})
+    const {data: stocksData } = useStocksQuery(0, 100, '', {orderBy: 'asc', sortBy: 'name', type: null})
     
 
 

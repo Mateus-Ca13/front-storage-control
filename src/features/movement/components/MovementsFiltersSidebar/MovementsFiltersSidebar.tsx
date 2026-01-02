@@ -21,8 +21,8 @@ export default function MovementsFiltersSidebar({open, toggleDrawer, filters, se
     const [users, setUsers] = useState<iUserColumnConfig[]>([])
     const [stocks, setStocks] = useState<iStockColumnConfig[]>([])
 
-    const {data: usersData, isLoading: usersLoading, error: usersError} = useUsersQuery(0, 100, '', {orderBy: 'asc', sortBy: 'name'})
-    const {data: stocksData, isLoading: stocksLoading, error: stocksError} = useStocksQuery(0, 100, '', {orderBy: 'asc', sortBy: 'name', type: null})
+    const {data: usersData } = useUsersQuery(0, 100, '', {orderBy: 'asc', sortBy: 'name'})
+    const {data: stocksData } = useStocksQuery(0, 100, '', {orderBy: 'asc', sortBy: 'name', type: null})
 
     useEffect(() => {
         const users = usersData?.data?.users ?? [];

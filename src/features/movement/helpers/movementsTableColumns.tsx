@@ -35,7 +35,7 @@ export const movementsTableColumns: ColumnConfig<iMovementColumnConfig>[] = [
             header: 'Origem e destino',
             align: 'center',
             minWidth: 100,
-            format: (value, movement ) => (<CenterFlexBox gap={1}>
+            format: (_value, movement ) => (<CenterFlexBox gap={1}>
                 <Typography color="error" variant="body2">{formatStringToMaxLength(movement?.originStock?.name, 50)?? ''}</Typography>
                 < ArrowForwardRounded fontSize="small"/>
                 <Typography color="success" variant="body2">{formatStringToMaxLength(movement?.destinationStock?.name, 50)?? ''}</Typography></CenterFlexBox>)
@@ -59,7 +59,7 @@ export const movementsTableColumns: ColumnConfig<iMovementColumnConfig>[] = [
             key: 'actions', 
             header: 'Ações', 
             align: 'center', 
-            format: (value, mov) => <TableActionsMenu id={mov?.id?? -1} actions={movementsMenuActions}/>
+            format: (_value, mov) => <TableActionsMenu id={mov?.id?? -1} actions={movementsMenuActions}/>
         }
     ]
 
@@ -69,28 +69,28 @@ export const movementsRelationedProductsTableColumns: ColumnConfig<iMovementFull
         header: 'ID do Produto',
         align: 'center',
         minWidth: 20,
-        format: (value, movedProduct) => movedProduct?.product.id
+        format: (_value, movedProduct) => movedProduct?.product.id
     },
     {
         key: 'name',
         header: 'Nome do Produto',
         align: 'center',
         minWidth: 70,
-        format: (value, movedProduct) => movedProduct?.product.name
+        format: (_value, movedProduct) => movedProduct?.product.name
     },
     {
         key: 'codebar',
         header: 'Código de Barras',
         align: 'center',
         minWidth: 50,
-        format: (value, movedProduct) => movedProduct?.product.codebar ? movedProduct?.product.codebar : '—'
+        format: (_value, movedProduct) => movedProduct?.product.codebar ? movedProduct?.product.codebar : '—'
     },
     {
         key: 'category',
         header: 'Categoria',
         align: 'center',
         minWidth: 30,
-        format: (value, movedProduct) => movedProduct?.product.category ? <CategoryChip colorPreset={movedProduct?.product.category.colorPreset} label={movedProduct?.product.category.name}/> : '—'
+        format: (_value, movedProduct) => movedProduct?.product.category ? <CategoryChip colorPreset={movedProduct?.product.category.colorPreset} label={movedProduct?.product.category.name}/> : '—'
     },
     {
         key: 'quantity',
@@ -111,13 +111,13 @@ export const movementsRelationedProductsTableColumns: ColumnConfig<iMovementFull
         header: 'Total',
         align: 'center',
         minWidth: 30,
-        format: (value, product) => `R$ ${formatPrice((product?.pricePerUnit?? 0) * (product?.quantity?? 0))}`
+        format: (_value, product) => `R$ ${formatPrice((product?.pricePerUnit?? 0) * (product?.quantity?? 0))}`
     },
     {
         key: 'actions',
         header: 'Ações',
         align: 'center',
-        format: (value, movedProduct) => <TableActionsMenu id={movedProduct?.product.id?? -1} actions={productsMenuActions}/>
+        format: (_value, movedProduct) => <TableActionsMenu id={movedProduct?.product.id?? -1} actions={productsMenuActions}/>
     }
 
 ]

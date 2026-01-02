@@ -55,6 +55,6 @@ export const usersTableColumns: ColumnConfig<iUserColumnConfig>[] = [
             key: 'actions', 
             header: 'Ações', 
             align: 'center', 
-            format: (value, user) => <TableActionsMenu id={user?.id?? -1} actions={usersMenuActions}/>
+            format: (_value, user) => <TableActionsMenu id={user?.id?? -1} actions={usersMenuActions}/>
         }
     ]

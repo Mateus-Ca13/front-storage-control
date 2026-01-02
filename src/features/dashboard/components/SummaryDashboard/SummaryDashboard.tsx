@@ -41,7 +41,7 @@ export default function SummaryDashboard() {
             sx={{ color: theme.palette.primary.main}}/>} 
             title="Produtos cadastrados" 
             value={summaryData!.totalProductsRegistered.value} 
-            type="upgrade" warning message={summaryData!.totalProductsRegistered.metrics} />
+            type="upgrade" message={summaryData!.totalProductsRegistered.metrics} />
         </CardLayout>
       </Grid>
       <Grid size={{xl: 3, lg:3, md: 6, sm: 12, xs: 12}}>

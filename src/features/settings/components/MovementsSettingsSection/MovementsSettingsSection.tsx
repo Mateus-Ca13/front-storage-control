@@ -51,7 +51,7 @@ export default function MovementsSettingsSection() {
                         <MenuItem value={undefined}>
                                 <Typography variant='body2'>Nenhum</Typography>
                         </MenuItem>
-                        {stockData?.data?.stocks?.map((stock, index)=>{
+                        {stocks.map((stock, index)=>{
                             return (
                                 <MenuItem value={stock.id} key={index}>
                                     <Typography variant='body2'>{stock.name}</Typography>

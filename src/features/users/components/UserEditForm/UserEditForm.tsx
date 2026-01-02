@@ -1,4 +1,4 @@
-import { use, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { useConfirmActionDialogStore } from "../../../../shared/store/confirmActionDialogStore"
 import { useToastStore } from "../../../../shared/store/toastStore"
 import { UserRoleTuple, type iUser, type UserRoleType } from "../../../../shared/types/user"
@@ -32,7 +32,7 @@ export default function UserEditForm({user}: UserEditFormProps) {
     const renderToast = useToastStore(state => state.renderToast)
     const [editingUserData, setEditingUserData] = useState<iUser | null>(null)
     const [onEditing, setOnEditing] = useState<boolean>(false)
-    const {register, handleSubmit, formState: { errors, isSubmitting }, setError} = useForm<UserSchema>({
+    const {register, handleSubmit, formState: { errors }} = useForm<UserSchema>({
             resolver: zodResolver(userSchema),
         });
     

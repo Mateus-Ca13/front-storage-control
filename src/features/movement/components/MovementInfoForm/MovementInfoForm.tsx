@@ -1,7 +1,7 @@
 import {  FormControl, Grid, InputAdornment, InputLabel, MenuItem, Typography } from '@mui/material'
 import { EditingTextField } from '../../../../shared/components/TextField/TextField'
 import { EditingSelect } from '../../../../shared/components/EditingSelect/EditingSelect'
-import { BetweenFlexBox, CenterFlexBox, StartColumnBox, StartFlexBox } from '../../../../shared/components/Boxes/Boxes'
+import { BetweenFlexBox, StartColumnBox, StartFlexBox } from '../../../../shared/components/Boxes/Boxes'
 import { MovementTuple, type iMovementFull } from '../../../../shared/types/movement'
 import { formatMovementType, formatPrice, formatTimestamp } from '../../../../shared/utils/formatters'
 import { CategoryOutlined, PersonOutlineOutlined, Schedule, SwapHorizRounded } from '@mui/icons-material'

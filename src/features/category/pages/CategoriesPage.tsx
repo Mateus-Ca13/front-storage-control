@@ -39,7 +39,7 @@ export default function CategoriesPage() {
 
     const [searchResults, setSearchResults] = useState<(iCategoryColumnConfig)[]>([])
     
-    const { data, isLoading, error } = useCategoryQuery(page, rowsPerPage, searchValue, searchFilters)
+    const { data } = useCategoryQuery(page, rowsPerPage, searchValue, searchFilters)
     
     useEffect(()=>{
             if (isFirstRender.current) {

@@ -24,9 +24,9 @@ export default function CreateProductDialog() {
   const isCreateModalOpen = useProductStore(state => state.isCreateModalOpen)
   const closeCreateModal = useProductStore(state => state.closeCreateModal)
   const openImportProductModal = useProductStore(state => state.openImportProductModal)
-  const {data, error, isLoading } = useCategoryQuery(0, 100, '', {})
+  const {data } = useCategoryQuery(0, 100, '', {})
   const [categories, setCategories] = useState<iCategoryColumnConfig[]>([])
-  const {register, control, handleSubmit, formState: { errors, isSubmitting }, setError, reset: resetForm} = useForm<ProductSchema>({
+  const {register, control, handleSubmit, formState: { errors }, reset: resetForm} = useForm<ProductSchema>({
           resolver: zodResolver(productSchema),
           defaultValues: {
             name: '',

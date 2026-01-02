@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import { CardLayout } from '../../../shared/components/Cards/Cards'
 import SearchInput from '../../../shared/components/SearchInput/SearchInput'
 import { StartColumnBox, StartFlexBox } from '../../../shared/components/Boxes/Boxes'
-import { AddCircleOutlineRounded, FilterAltRounded, PeopleRounded, Person2Rounded } from '@mui/icons-material'
+import { AddCircleOutlineRounded, FilterAltRounded, PeopleRounded } from '@mui/icons-material'
 import ListingTable from '../../../shared/components/ListingTable/ListingTable'
 import { useUsersQuery } from '../hooks/useUsersQuery'
 import type { iUserColumnConfig } from '../../../shared/types/user'
@@ -39,7 +39,7 @@ export default function UsersPage() {
 
     const [searchResults, setSearchResults] = useState<(iUserColumnConfig)[]>([])
     
-    const { data, isLoading, error } = useUsersQuery(page, rowsPerPage, searchValue, searchFilters)
+    const { data  } = useUsersQuery(page, rowsPerPage, searchValue, searchFilters)
     
     useEffect(()=>{
             if (isFirstRender.current) {

@@ -5,7 +5,6 @@ import { EditingTextField } from "../../../../shared/components/TextField/TextFi
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useRef, useState, type BaseSyntheticEvent } from "react";
 import { useToastStore } from "../../../../shared/store/toastStore";
-import type { iProduct } from "../../../../shared/types/product";
 import { useKeyboardShortcuts } from "../../../../shared/hooks/useKeyboardShortcuts";
 import { SearchRounded } from "@mui/icons-material";
 import { BetweenFlexBox, CenterColumnBox, CenterFlexBox, StartColumnBox } from "../../../../shared/components/Boxes/Boxes";
@@ -41,7 +40,7 @@ type WithdrawalInterfaceProps = {
 }
 
 
-export default function WithdrawalInterface({formStepSetter, formValueGetter, formValueSetter, formTrigger, formControl, formErrors, onSubmitMovement }: WithdrawalInterfaceProps) {
+export default function WithdrawalInterface({formStepSetter, formValueGetter, formValueSetter, formErrors, onSubmitMovement }: WithdrawalInterfaceProps) {
 
   const theme = useTheme()
   const renderToast = useToastStore(state => state.renderToast)
@@ -51,7 +50,6 @@ export default function WithdrawalInterface({formStepSetter, formValueGetter, fo
   const [productsAddedToMovement, setProductsAddedToMovement] = useState<AddProductToMovementSchema[]>([])
   const codebarInputRef = useRef<HTMLInputElement>(null)
   const [productSearch, setProductSearch] = useState('')
-  const [searchedProduct, setSearchedProduct] = useState<iProduct | null>(null)
   const [stocks, setStocks] = useState<iStockColumnConfig[]>([])
   const isQuantityModalOpen = useMovementStore(state => state.isProductQuantityModalOpen)
   const isObservationModalOpen = useMovementStore(state => state.isObservationModalOpen)
@@ -60,11 +58,10 @@ export default function WithdrawalInterface({formStepSetter, formValueGetter, fo
 
   const {
     register: registerAddProduct, 
-    control: controlAddProduct,
+
     reset: productResetForm,
     watch: watchAddProduct, 
-    handleSubmit: handleAddProductToMovement, 
-    formState: { errors: errorsAddProduct, isSubmitting: isSubmittingAddProduct }, 
+    formState: { errors: errorsAddProduct }, 
     setError: setErrorAddProduct,
     setValue: setValueAddProduct,
     getValues: getValuesAddProduct,
@@ -117,7 +114,7 @@ export default function WithdrawalInterface({formStepSetter, formValueGetter, fo
       }
     }, 1)
   
-    const {data: stocksData, isLoading: stocksLoading, error: stocksError} = useStocksQuery(0, 100, '', {orderBy: 'asc', sortBy: 'name', type: null})
+    const {data: stocksData } = useStocksQuery(0, 100, '', {orderBy: 'asc', sortBy: 'name', type: null})
     const selectedProductQuantity = watchAddProduct('quantity')
 
   const handleAddProductToMovementSubmit = async (movementData: AddProductToMovementSchema) => {
@@ -165,7 +162,6 @@ export default function WithdrawalInterface({formStepSetter, formValueGetter, fo
 
     if (productData.success) {
       const product = productData.data;
-      setSearchedProduct(product);
 
       setValueAddProduct('product', {
         id: product.id,

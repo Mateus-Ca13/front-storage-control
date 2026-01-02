@@ -1,6 +1,6 @@
 import React from 'react'
 import { CenterColumnBox, CenterFlexBox } from '../../../../../shared/components/Boxes/Boxes'
-import { Box, Button, InputAdornment, Tab, Tabs, Typography } from '@mui/material'
+import { Button, InputAdornment, Tab, Tabs, Typography } from '@mui/material'
 import { FileUploadOutlined, SearchRounded } from '@mui/icons-material'
 import { EditingTextField } from '../../../../../shared/components/TextField/TextField'
 import CustomTabPanel from '../../../../../shared/components/CustomTabPanel/CustomTabPanel'
@@ -8,7 +8,7 @@ import CustomTabPanel from '../../../../../shared/components/CustomTabPanel/Cust
 export default function ImportNfeTab() {
     const [value, setValue] = React.useState(0);
 
-    const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
     function a11yProps(index: number) {

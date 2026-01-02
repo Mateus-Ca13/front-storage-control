@@ -59,7 +59,7 @@ export default function ProductsPage() {
 
     const [searchResults, setSearchResults] = useState<(iProductColumnConfig)[]>([])
     
-    const { data, isLoading, error } = useProductsQuery(page, rowsPerPage, searchValue, searchFilters)
+    const { data } = useProductsQuery(page, rowsPerPage, searchValue, searchFilters)
 
     
     useEffect(() => {

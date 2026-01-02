@@ -45,7 +45,7 @@ export default function CreateTransferDialog() {
       resetField: movementResetField,
       watch: watchMovement,
       handleSubmit: handleSubmitMovement, 
-      formState: { errors: errorsMovement, isSubmitting: isSubmittingMovement }, 
+      formState: { errors: errorsMovement }, 
       setError: setErrorMovement,
       setValue: setValueMovement } = useForm<MovementSchema>({
       resolver: zodResolver(movementSchema),
@@ -61,7 +61,7 @@ export default function CreateTransferDialog() {
       reset: productResetForm,
       watch: watchAddProduct, 
       handleSubmit: handleAddProductToMovement, 
-      formState: { errors: errorsAddProduct, isSubmitting: isSubmittingAddProduct }, 
+      formState: { errors: errorsAddProduct }, 
       setError: setErrorAddProduct,
       setValue: setValueAddProduct,
       resetField: productResetField } = useForm<AddProductToMovementSchema>({
@@ -70,8 +70,8 @@ export default function CreateTransferDialog() {
     })
     const selectedProduct = watchAddProduct('product')
     const stockId = watchMovement('originStockId')
-    const {data: stocksData, isLoading: stocksLoading, error: stocksError} = useStocksQuery(0, 100, '', {orderBy: 'asc', sortBy: 'name', type: null})
-    const {data: productsData, isLoading: productsLoading, error: productsError } = useProductsQuery(0, 10, productSearch, {orderBy: 'asc', sortBy: 'name', categoriesIds: [], hasNoCodebar: false, isBelowMinStock: false, stockId: stockId?? undefined})
+    const {data: stocksData } = useStocksQuery(0, 100, '', {orderBy: 'asc', sortBy: 'name', type: null})
+    const {data: productsData } = useProductsQuery(0, 10, productSearch, {orderBy: 'asc', sortBy: 'name', categoriesIds: [], hasNoCodebar: false, isBelowMinStock: false, stockId: stockId?? undefined})
     const [stocks, setStocks] = useState<iStockColumnConfig[]>([])
 
     useEffect(() => { 
@@ -323,7 +323,7 @@ export default function CreateTransferDialog() {
                         )}
                           isOptionEqualToValue={(opt, val) => opt.id === val.id}
                           value={field.value || null || undefined}
-                          onChange={(event, selectedOption) => field.onChange(selectedOption)}
+                          onChange={(_event, selectedOption) => field.onChange(selectedOption)}
                           renderInput={(params) => (
                             <EditingTextField
                               {...params}

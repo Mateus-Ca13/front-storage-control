@@ -1,7 +1,6 @@
 import { ExpandMore } from '@mui/icons-material'
 import { StartColumnBox } from '../../../../shared/components/Boxes/Boxes'
 import { Accordion, AccordionDetails, AccordionSummary, Divider, Typography, useTheme } from '@mui/material'
-import CustomLink from '../../../../shared/components/CustomLink/CustomLink'
 
 export default function EntitiesHelpSection() {
     const theme = useTheme()

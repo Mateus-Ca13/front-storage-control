@@ -1,6 +1,4 @@
-
-
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useConfirmActionDialogStore } from '../../../../shared/store/confirmActionDialogStore'
 import { useToastStore } from '../../../../shared/store/toastStore'
 import type { iCategory } from '../../../../shared/types/category'
@@ -13,7 +11,7 @@ import EditStateButton from '../../../../shared/components/EditStateButton/EditS
 import { EditingTextField } from '../../../../shared/components/TextField/TextField'
 import { EditingSelect } from '../../../../shared/components/EditingSelect/EditingSelect'
 import { DiscountRounded } from '@mui/icons-material'
-import { EndFlexBox, StartColumnBox, StartFlexBox } from '../../../../shared/components/Boxes/Boxes'
+import { StartColumnBox, StartFlexBox } from '../../../../shared/components/Boxes/Boxes'
 import { formatTimestamp } from '../../../../shared/utils/formatters'
 import DeleteEntityButton from '../../../../shared/components/DeleteEntityButton/DeleteEntityButton'
 import { useNavigate } from 'react-router-dom'
@@ -32,7 +30,7 @@ export default function CategoryEditForm({ category } : CategoryEditFormProps) {
     const renderToast = useToastStore(state => state.renderToast)
     const [editingCategoryData, setEditingCategoryData] = useState<iCategory | null>(null)
     const [onEditing, setOnEditing] = useState<boolean>(false)
-    const {register, handleSubmit, formState: { errors, isSubmitting }, setError} = useForm<CategorySchema>({
+    const {register, handleSubmit, formState: { errors }} = useForm<CategorySchema>({
             resolver: zodResolver(categorySchema),
         });
 

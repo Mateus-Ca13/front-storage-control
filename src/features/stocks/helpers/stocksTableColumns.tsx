@@ -32,7 +32,7 @@ export const stocksTableColumns: ColumnConfig<iStockColumnConfig>[] = [
             header: 'Produtos em estoque', 
             align: 'center', 
             minWidth: 30, 
-            format: (value, stock) => <CenterFlexBox gap={1}> {value} <Category color="secondary" fontSize="small"/></CenterFlexBox>
+            format: (value, _stock) => <CenterFlexBox gap={1}> {value} <Category color="secondary" fontSize="small"/></CenterFlexBox>
         },
         {
             key: 'status',
@@ -45,6 +45,6 @@ export const stocksTableColumns: ColumnConfig<iStockColumnConfig>[] = [
             key: 'actions', 
             header: 'Ações', 
             align: 'center', 
-            format: (value, stock) => <TableActionsMenu id={stock?.id ?? -1} actions={stocksMenuActions}/>
+            format: (_value, stock) => <TableActionsMenu id={stock?.id ?? -1} actions={stocksMenuActions}/>
         }
     ]

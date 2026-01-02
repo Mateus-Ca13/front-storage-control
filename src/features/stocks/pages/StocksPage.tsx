@@ -40,7 +40,7 @@ export default function StocksPage() {
 
     const [searchResults, setSearchResults] = useState<(iStockColumnConfig)[]>([])
     
-    const { data, isLoading, error } = useStocksQuery(page, rowsPerPage, searchValue, searchFilters)
+    const { data } = useStocksQuery(page, rowsPerPage, searchValue, searchFilters)
     
     useEffect(()=>{
         if (isFirstRender.current) {

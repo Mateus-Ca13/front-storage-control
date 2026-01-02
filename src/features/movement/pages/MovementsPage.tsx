@@ -46,7 +46,7 @@ export default function MovementsPage() {
 
     const [searchResults, setSearchResults] = useState<(iMovementColumnConfig)[]>([])
     
-    const { data, isLoading, error } = useMovementsQuery(page, rowsPerPage, searchValue, searchFilters)
+    const { data } = useMovementsQuery(page, rowsPerPage, searchValue, searchFilters)
 
     useEffect(()=>{
             if (isFirstRender.current) {

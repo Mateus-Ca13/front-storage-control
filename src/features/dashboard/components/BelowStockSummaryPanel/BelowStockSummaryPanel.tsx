@@ -13,7 +13,7 @@ export default function BelowStockSummaryPanel() {
     const theme = useTheme()
     const navigate = useNavigate()
     const [belowStockProducts,setBelowStockProducts] = useState<iProductColumnConfig[]>([])
-    const { data, isLoading, error } = useProductsQuery(0, 3, '', {isBelowMinStock: true, categoriesIds: [], hasNoCodebar: false})
+    const { data } = useProductsQuery(0, 3, '', {isBelowMinStock: true, categoriesIds: [], hasNoCodebar: false})
     
     useEffect(() => {
       const products = data?.data?.products ?? [];

@@ -1,8 +1,7 @@
-import { Button, Chip, Drawer, FormControl, InputLabel, MenuItem, Select, Typography } from "@mui/material";
+import { Button, Chip, Drawer, Typography } from "@mui/material";
 import { BetweenFlexBox, CenterFlexBox, StartColumnBox } from "../../../../shared/components/Boxes/Boxes";
 import CheckboxOption from "../../../../shared/components/CheckboxOption/CheckboxOption";
 import type { SetStateAction } from "react";
-import type { StockType } from "../../../../shared/types/stock";
 import type { CategoriesSearchFiltersProps } from "../../pages/CategoriesPage";
 
 

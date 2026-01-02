@@ -13,7 +13,7 @@ type WithdrawalProductsListProps = {
     errorMessage?: string
 }
 
-export default function WithdrawalProductsList({ products, setProducts, errorMessage }: WithdrawalProductsListProps) {
+export default function WithdrawalProductsList({ products, setProducts }: WithdrawalProductsListProps) {
 
     const theme = useTheme()
   return (

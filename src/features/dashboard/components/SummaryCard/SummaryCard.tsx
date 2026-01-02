@@ -8,11 +8,10 @@ type SummaryCardProps = {
     value: string | number;
     icon?: React.ReactNode;
     message?: string;
-    warning?: boolean;
     type: 'upgrade' | 'downgrade' | 'warning' | 'normal';
 }
 
-export default function SummaryCard({title, value, icon, message, warning, type }: SummaryCardProps) {
+export default function SummaryCard({title, value, icon, message, type }: SummaryCardProps) {
     
     const theme = useTheme()
     const [messageType, setMessageType] = useState<{color: string, icon: React.ReactNode} | undefined>()

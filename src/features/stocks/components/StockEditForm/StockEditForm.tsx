@@ -1,6 +1,6 @@
 import { Divider, FormControl, Grid, InputLabel, MenuItem, Typography } from '@mui/material'
-import React, { useEffect, useState } from 'react'
-import { BetweenFlexBox, StartColumnBox, StartFlexBox } from '../../../../shared/components/Boxes/Boxes'
+import { useEffect, useState } from 'react'
+import { StartColumnBox, StartFlexBox } from '../../../../shared/components/Boxes/Boxes'
 import { stockSchema, type StockSchema } from '../../../../schemas/stockSchema'
 import { useConfirmActionDialogStore } from '../../../../shared/store/confirmActionDialogStore'
 import { useToastStore } from '../../../../shared/store/toastStore'
@@ -29,7 +29,7 @@ export default function StockEditForm({stock}: StockEditFormProps) {
     const renderToast = useToastStore(state => state.renderToast)
     const [editingStockData, setEditingStockData] = useState<iStock | null>(null)
     const [onEditing, setOnEditing] = useState<boolean>(false)
-    const {register, handleSubmit, formState: { errors, isSubmitting }, setError} = useForm<StockSchema>({
+    const {register, handleSubmit, formState: { errors }} = useForm<StockSchema>({
             resolver: zodResolver(stockSchema),
         });
     

@@ -1,4 +1,4 @@
-import { Box, Paper, Tab, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Typography, useTheme } from '@mui/material';
+import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, useTheme } from '@mui/material';
 import React, { useEffect, useRef } from 'react'
 import type { ColumnConfig } from '../../types/columnConfig';
 import { useSettingsStore } from '../../../features/settings/stores/SettingsStore';
@@ -72,7 +72,7 @@ export default function ListingTable<T>({items, total, columns, onRowClick, rowK
             {items.length > 0 ?
              items.map((row) => {
                 return (
-                  <TableRow  sx={{':hover': {cursor: 'pointer',}}} onDoubleClick={(e)=>onRowClick!(row)} hover role="checkbox" tabIndex={-1} key={rowKey(row)}>
+                  <TableRow  sx={{':hover': {cursor: 'pointer',}}} onDoubleClick={(_e)=>onRowClick!(row)} hover role="checkbox" tabIndex={-1} key={rowKey(row)}>
                     {columns.map((column) => {
                       const value = row[column.key as keyof T ];
                       return (

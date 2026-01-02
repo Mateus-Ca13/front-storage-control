@@ -1,16 +1,14 @@
-import { ArrowForwardIosRounded, ArrowForwardRounded, CancelRounded, Category, CheckCircleRounded, DeleteOutlineRounded, ErrorRounded } from "@mui/icons-material";
+import { ArrowForwardRounded, CancelRounded, Category, CheckCircleRounded, DeleteOutlineRounded, ErrorRounded } from "@mui/icons-material";
 import { CenterFlexBox } from "../../../shared/components/Boxes/Boxes";
 import { CategoryChip, TwoColorsChip } from "../../../shared/components/Chips/Chips";
 import type { ColumnConfig } from "../../../shared/types/columnConfig";
-import type { iMinimizedProductColumnConfig, iProductAddedToMovementColumnConfig, iProductColumnConfig, iProductsImportCsvReturn } from "../../../shared/types/product";
+import type { iMinimizedProductColumnConfig, iProductAddedToMovementColumnConfig, iProductColumnConfig } from "../../../shared/types/product";
 import { formatMovementType, formatPrice, formatStockType, formatStringToMaxLength, formatTimestamp } from "../../../shared/utils/formatters";
 import TableActionsMenu from "../../../shared/components/TableActionsMenu/TableActionsMenu";
 import { productsMenuActions } from "./productsMenuActions";
 import type { iMinimizedProductMovementsColumnConfig } from "../../../shared/types/movement";
 import { Button, Typography } from "@mui/material";
-import type { AddProductToMovementSchema } from "../../../schemas/MovementSchema";
 import { LightTooltip } from "../../../shared/components/Tooltip/Tooltip";
-import type { ProductSchema } from "../../../schemas/productSchema";
 
 
 export const productsTableColumns: ColumnConfig<iProductColumnConfig>[] = [
@@ -70,7 +68,7 @@ export const productsTableColumns: ColumnConfig<iProductColumnConfig>[] = [
             key: 'actions', 
             header: 'Ações', 
             align: 'center', 
-            format: (value, product) => <TableActionsMenu id={product?.id ?? -1} actions={productsMenuActions}/>
+            format: (_value, product) => <TableActionsMenu id={product?.id ?? -1} actions={productsMenuActions}/>
         }
     ]
 
@@ -81,28 +79,28 @@ export const minimizedProductsTableColumns: ColumnConfig<iMinimizedProductColumn
         header: 'ID do Estoque',
         align: 'center',
         minWidth: 20,
-        format: (value, data) => <CenterFlexBox gap={1}>{data?.stock.id as number}</CenterFlexBox>
+        format: (_value, data) => <CenterFlexBox gap={1}>{data?.stock.id as number}</CenterFlexBox>
     },
     {
         key: 'stock',
         header: 'Nome do Estoque',
         align: 'center',
         minWidth: 50,
-        format: (value, data) => <CenterFlexBox gap={1}>{formatStringToMaxLength(data?.stock?.name, 50)}</CenterFlexBox>
+        format: (_value, data) => <CenterFlexBox gap={1}>{formatStringToMaxLength(data?.stock?.name, 50)}</CenterFlexBox>
     },
     {
         key: 'type',
         header: 'Tipo',
         align: 'center',
         minWidth: 30,
-        format: (value, data) => <CenterFlexBox gap={1}>{formatStockType(data?.stock.type?? 'CENTRAL')}</CenterFlexBox>
+        format: (_value, data) => <CenterFlexBox gap={1}>{formatStockType(data?.stock.type?? 'CENTRAL')}</CenterFlexBox>
     },
     {
         key: 'quantity',
         header: 'Quantidade',
         align: 'center',
         minWidth: 30,
-        format: (value, data) => <CenterFlexBox gap={1}>{value as string} <Category color="secondary" fontSize="small"/></CenterFlexBox>
+        format: (value, _data) => <CenterFlexBox gap={1}>{value as string} <Category color="secondary" fontSize="small"/></CenterFlexBox>
     }
 ]
 
@@ -112,14 +110,14 @@ export const productMovementsTableColumns: ColumnConfig<iMinimizedProductMovemen
         header: 'Data/Horário',
         align: 'center',
         minWidth: 20,
-        format: (value, data) => <CenterFlexBox gap={1}>{formatTimestamp(data?.movementBatch.createdAt!, 'short')}</CenterFlexBox>
+        format: (_value, data) => <CenterFlexBox gap={1}>{formatTimestamp(data?.movementBatch.createdAt!, 'short')}</CenterFlexBox>
     },
     { 
         key: 'movementType', 
         header: 'Tipo de Movimentação',
         align: 'center', 
         minWidth: 50, 
-        format: (value, data) => <TwoColorsChip
+        format: (_value, data) => <TwoColorsChip
         colorPreset={data?.movementBatch.type === 'ENTRY' ? 'success' : data?.movementBatch.type === 'EXIT' ? 'error' : 'warning'}
         label={formatMovementType(data?.movementBatch.type!)}
         />
@@ -129,14 +127,14 @@ export const productMovementsTableColumns: ColumnConfig<iMinimizedProductMovemen
         header: 'Quantidade transferida',
         align: 'center',
         minWidth: 30,
-        format: (value, data) => <CenterFlexBox gap={1}>{data?.quantity as number} <Category color="secondary" fontSize="small"/></CenterFlexBox>
+        format: (_value, data) => <CenterFlexBox gap={1}>{data?.quantity as number} <Category color="secondary" fontSize="small"/></CenterFlexBox>
     },
     {
         key: 'stocks',
         header: 'Origem e Destino',
         align: 'center',
         minWidth: 30,  
-        format: (value, data) => (
+        format: (_value, data) => (
         <CenterFlexBox 
         alignItems={'center'} 
         gap={0.5}
@@ -175,21 +173,21 @@ export const minimizedProductMovementsTableColumns: ColumnConfig<iProductAddedTo
         header: 'Preço Unitário',
         align: 'center',
         minWidth: 50,
-        format: (value, product) => `R$ ${formatPrice(product?.pricePerUnit?? 0)}`
+        format: (_value, product) => `R$ ${formatPrice(product?.pricePerUnit?? 0)}`
     },
     {
         key: 'totalPrice',
         header: 'Preço Total',
         align: 'center',
         minWidth: 50,
-        format: (value, product) => `R$ ${formatPrice((product?.pricePerUnit ?? 0) * (product?.quantity ?? 0))}`
+        format: (_value, product) => `R$ ${formatPrice((product?.pricePerUnit ?? 0) * (product?.quantity ?? 0))}`
     },
     {
         key: 'action',
         header: 'Ação',
         align: 'center',
         minWidth: 50,
-        format: (value, product) => <LightTooltip title="Excluir"><Button onClick={() => product?.excludeAction()}><DeleteOutlineRounded color="error"/></Button></LightTooltip>
+        format: (_value, product) => <LightTooltip title="Excluir"><Button onClick={() => product?.excludeAction()}><DeleteOutlineRounded color="error"/></Button></LightTooltip>
         
     },
 ]
@@ -218,14 +216,14 @@ export const withdrawalProductMovementsTableColumns: ColumnConfig<iProductAddedT
         header: 'Preço Unitário',
         align: 'center',
         minWidth: 50,
-        format: (value, product) => `R$ ${formatPrice(product?.pricePerUnit?? 0)}`
+        format: (_value, product) => `R$ ${formatPrice(product?.pricePerUnit?? 0)}`
     },
     {
         key: 'totalPrice',
         header: 'Preço Total',
         align: 'center',
         minWidth: 50,
-        format: (value, product) => `R$ ${formatPrice((product?.pricePerUnit ?? 0) * (product?.quantity ?? 0))}`
+        format: (_value, product) => `R$ ${formatPrice((product?.pricePerUnit ?? 0) * (product?.quantity ?? 0))}`
     },
 ]
 

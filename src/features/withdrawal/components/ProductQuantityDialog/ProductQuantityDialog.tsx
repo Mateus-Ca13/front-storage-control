@@ -2,7 +2,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, T
 import { useMovementStore } from '../../../movement/stores/useMovementStore'
 import type { UseFormSetValue } from 'react-hook-form';
 import type { AddProductToMovementSchema } from '../../../../schemas/MovementSchema';
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { useKeyboardShortcuts } from '../../../../shared/hooks/useKeyboardShortcuts';
 import { useShortcutContextStore } from '../../../../shared/store/keyboardShortcutsStore';
 

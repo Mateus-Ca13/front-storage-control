@@ -21,7 +21,7 @@ export const productsMenuActions: ActionMenuOption[] = [
         label: 'Excluir produto',
         icon: <DeleteRounded fontSize="small"/>,
         color: 'error',
-        action: (id: number, navigate: NavigateFunction) => {
+        action: (id: number, _navigate: NavigateFunction) => {
           const renderConfirmActionDialog = useConfirmActionDialogStore.getState().renderConfirmActionDialog;
           const closeConfirmActionDialog = useConfirmActionDialogStore.getState().handleClose;
           const renderToast = useToastStore.getState().renderToast;
